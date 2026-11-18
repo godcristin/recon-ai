@@ -8,6 +8,7 @@ import (
 	reconV1 "recon-ai/api/recon/v1"
 	"recon-ai/app/core/internal/biz"
 	"recon-ai/app/core/internal/data"
+	"recon-ai/app/core/internal/data/model"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -110,11 +111,25 @@ func (s *ReconService) GetDiff(ctx context.Context, req *reconV1.GetDiffReq) (*r
 	}
 
 	return &reconV1.DiffDetail{
-		Diff:      toProtoDiff(d),
-		Channel:   toProtoRecord(channel),
-		System:    toProtoRecord(system),
-		MatchRule: matchRule,
+		Diff:          toProtoDiff(d),
+		Channel:       toProtoRecord(channel),
+		System:        toProtoRecord(system),
+		MatchRule:     matchRule,
+		TimeDiffHours: timeDiffHours(channel, system),
 	}, nil
+}
+
+// timeDiffHours 计算两侧交易时间差（小时，取绝对值）。
+// 放在 core 是因为它属于业务计算，BFF 只做聚合。
+func timeDiffHours(channel, system *model.ReconRecord) int64 {
+	if channel == nil || system == nil || channel.TradeTime == nil || system.TradeTime == nil {
+		return 0
+	}
+	d := system.TradeTime.Sub(*channel.TradeTime)
+	if d < 0 {
+		d = -d
+	}
+	return int64(d.Hours())
 }
 
 // SaveClassification 回写 AI 归因

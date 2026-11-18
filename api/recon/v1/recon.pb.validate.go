@@ -386,6 +386,8 @@ func (m *DiffDetail) validate(all bool) error {
 
 	// no validation rules for MatchRule
 
+	// no validation rules for TimeDiffHours
+
 	if len(errors) > 0 {
 		return DiffDetailMultiError(errors)
 	}

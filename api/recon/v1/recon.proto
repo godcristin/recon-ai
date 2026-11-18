@@ -67,6 +67,7 @@ message DiffDetail {
   Record channel = 2;       // 渠道侧记录，可为空
   Record system = 3;        // 系统侧记录，可为空
   string match_rule = 4;    // exact | fuzzy | none
+  int64 time_diff_hours = 5; // 两侧交易时间差（小时），由 core 计算，供归因使用
 }
 
 // Task 对账任务

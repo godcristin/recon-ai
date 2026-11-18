@@ -284,9 +284,10 @@ func (x *Diff) GetCreateTime() int64 {
 type DiffDetail struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Diff          *Diff                  `protobuf:"bytes,1,opt,name=diff,proto3" json:"diff,omitempty"`
-	Channel       *Record                `protobuf:"bytes,2,opt,name=channel,proto3" json:"channel,omitempty"`                      // 渠道侧记录，可为空
-	System        *Record                `protobuf:"bytes,3,opt,name=system,proto3" json:"system,omitempty"`                        // 系统侧记录，可为空
-	MatchRule     string                 `protobuf:"bytes,4,opt,name=match_rule,json=matchRule,proto3" json:"match_rule,omitempty"` // exact | fuzzy | none
+	Channel       *Record                `protobuf:"bytes,2,opt,name=channel,proto3" json:"channel,omitempty"`                                     // 渠道侧记录，可为空
+	System        *Record                `protobuf:"bytes,3,opt,name=system,proto3" json:"system,omitempty"`                                       // 系统侧记录，可为空
+	MatchRule     string                 `protobuf:"bytes,4,opt,name=match_rule,json=matchRule,proto3" json:"match_rule,omitempty"`                // exact | fuzzy | none
+	TimeDiffHours int64                  `protobuf:"varint,5,opt,name=time_diff_hours,json=timeDiffHours,proto3" json:"time_diff_hours,omitempty"` // 两侧交易时间差（小时），由 core 计算，供归因使用
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -347,6 +348,13 @@ func (x *DiffDetail) GetMatchRule() string {
 		return x.MatchRule
 	}
 	return ""
+}
+
+func (x *DiffDetail) GetTimeDiffHours() int64 {
+	if x != nil {
+		return x.TimeDiffHours
+	}
+	return 0
 }
 
 // Task 对账任务
@@ -1343,14 +1351,15 @@ const file_api_recon_v1_recon_proto_rawDesc = "" +
 	"\bai_model\x18\f \x01(\tR\aaiModel\x12%\n" +
 	"\x0eprompt_version\x18\r \x01(\tR\rpromptVersion\x12\x1f\n" +
 	"\vcreate_time\x18\x0e \x01(\x03R\n" +
-	"createTime\"\xb1\x01\n" +
+	"createTime\"\xd9\x01\n" +
 	"\n" +
 	"DiffDetail\x12&\n" +
 	"\x04diff\x18\x01 \x01(\v2\x12.api.recon.v1.DiffR\x04diff\x12.\n" +
 	"\achannel\x18\x02 \x01(\v2\x14.api.recon.v1.RecordR\achannel\x12,\n" +
 	"\x06system\x18\x03 \x01(\v2\x14.api.recon.v1.RecordR\x06system\x12\x1d\n" +
 	"\n" +
-	"match_rule\x18\x04 \x01(\tR\tmatchRule\"\xe5\x01\n" +
+	"match_rule\x18\x04 \x01(\tR\tmatchRule\x12&\n" +
+	"\x0ftime_diff_hours\x18\x05 \x01(\x03R\rtimeDiffHours\"\xe5\x01\n" +
 	"\x04Task\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x03R\x02id\x12\x12\n" +
 	"\x04name\x18\x02 \x01(\tR\x04name\x12\x16\n" +

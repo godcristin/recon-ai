@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package bff.conf;
+
+option go_package = "recon-ai/app/bff/internal/conf;conf";
+
+import "google/protobuf/duration.proto";
+
+message Bootstrap {
+  Server server = 1;
+  Client client = 2;
+}
+
+message Server {
+  message HTTP {
+    string network = 1;
+    string addr = 2;
+    google.protobuf.Duration timeout = 3;
+  }
+  HTTP http = 1;
+}
+
+// Client 下游 gRPC 服务地址。本地开发直连，部署时可换成服务发现地址。
+message Client {
+  string core_endpoint = 1;
+  string ai_endpoint = 2;
+  google.protobuf.Duration timeout = 3;
+  int64 max_upload_bytes = 4;
+}
