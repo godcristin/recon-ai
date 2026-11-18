@@ -2,7 +2,6 @@ package model
 
 import "time"
 
-// ReconDiff 对账差异
 type ReconDiff struct {
 	ID              int64     `gorm:"column:id;primaryKey;autoIncrement"`
 	TaskID          int64     `gorm:"column:task_id"`
@@ -28,7 +27,6 @@ func (ReconDiff) TableName() string {
 	return "recon_diff"
 }
 
-// DiffFeedback 人工纠正记录
 type DiffFeedback struct {
 	ID            int64     `gorm:"column:id;primaryKey;autoIncrement"`
 	DiffID        int64     `gorm:"column:diff_id"`

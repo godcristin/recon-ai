@@ -2,13 +2,11 @@ package domain
 
 import "time"
 
-// 记录来源
 const (
 	SourceChannel int32 = 1 // 渠道账单
 	SourceSystem  int32 = 2 // 系统订单
 )
 
-// Record 一条账单记录（渠道或系统），金额单位统一为分
 type Record struct {
 	ID        int64
 	TaskID    int64
@@ -22,7 +20,6 @@ type Record struct {
 	Remark    string
 }
 
-// DiffType 差异类型
 type DiffType string
 
 const (
@@ -31,7 +28,6 @@ const (
 	DiffAmountMismatch DiffType = "amount_mismatch" // 两侧都有但金额不一致
 )
 
-// MatchRule 命中规则
 type MatchRule string
 
 const (
@@ -40,7 +36,6 @@ const (
 	MatchNone  MatchRule = "none"  // 未匹配
 )
 
-// Diff 一条差异（纯领域对象，不含持久化字段）
 type Diff struct {
 	ChannelRecordID int64
 	SystemRecordID  int64

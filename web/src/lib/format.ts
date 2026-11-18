@@ -1,4 +1,3 @@
-// 展示层的小工具：金额换算、枚举中文名、颜色
 
 export function fenToYuan(v?: string | number | null): string {
   if (v === undefined || v === null || v === "") return "0.00";
@@ -55,7 +54,6 @@ export function stateLabel(s?: string): string {
   return STATE_LABELS[s] ?? s;
 }
 
-// 置信度分档：高/中/低，用于颜色与“是否需要人工”
 export function confidenceLevel(c?: number): "high" | "mid" | "low" {
   const v = c ?? 0;
   if (v >= 0.85) return "high";

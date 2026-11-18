@@ -2,7 +2,6 @@ package model
 
 import "time"
 
-// ReconTask 对账任务
 type ReconTask struct {
 	ID         int64      `gorm:"column:id;primaryKey;autoIncrement"`
 	Name       string     `gorm:"column:name"`

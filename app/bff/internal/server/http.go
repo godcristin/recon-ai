@@ -14,10 +14,8 @@ import (
 	"github.com/google/wire"
 )
 
-// ProviderSet is server providers.
 var ProviderSet = wire.NewSet(NewHTTPServer)
 
-// NewHTTPServer 装配 BFF 的 HTTP 服务
 func NewHTTPServer(c *conf.Bootstrap, svc *service.AppService, logger log.Logger) *khttp.Server {
 	var opts = []khttp.ServerOption{
 		khttp.Middleware(
@@ -25,7 +23,6 @@ func NewHTTPServer(c *conf.Bootstrap, svc *service.AppService, logger log.Logger
 				recovery.Recovery(),
 			),
 		),
-		// 本地前后端分离开发需要 CORS；生产由 nginx 同源反代，可移除
 		khttp.Filter(corsFilter),
 	}
 
@@ -41,10 +38,8 @@ func NewHTTPServer(c *conf.Bootstrap, svc *service.AppService, logger log.Logger
 
 	srv := khttp.NewServer(opts...)
 
-	// proto 里通过 google.api.http 声明的路由
 	appV1.RegisterAppHTTPServer(srv, svc)
 
-	// 文件上传无法用 google.api.http 表达，单独注册
 	router := srv.Route("/")
 	router.POST("/api/tasks", svc.UploadTask)
 

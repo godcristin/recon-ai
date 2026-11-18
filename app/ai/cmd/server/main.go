@@ -15,7 +15,6 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/http"
 )
 
-// go build -ldflags "-X main.Version=x.y.z"
 var (
 	Name    = "recon-ai"
 	Version = "v1.0.0"
@@ -39,7 +38,6 @@ func newApp(logger log.Logger, gs *grpc.Server, hs *http.Server) *kratos.App {
 func main() {
 	flag.Parse()
 
-	// API Key 只从环境变量读取；本地开发时允许放在仓库根目录的 .env（已 gitignore）
 	loadDotEnv(".env")
 
 	logger := log.With(log.NewStdLogger(os.Stdout),
@@ -77,7 +75,6 @@ func main() {
 	}
 }
 
-// loadDotEnv 极简 .env 加载器：KEY=VALUE，忽略注释与空行，已存在的环境变量优先
 func loadDotEnv(path string) {
 	b, err := os.ReadFile(path)
 	if err != nil {

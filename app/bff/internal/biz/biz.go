@@ -11,10 +11,8 @@ import (
 	"github.com/google/wire"
 )
 
-// ProviderSet is biz providers.
 var ProviderSet = wire.NewSet(NewReconUseCase)
 
-// ReconUseCase BFF 的编排层：聚合 core 与 ai，不承载业务规则
 type ReconUseCase struct {
 	core reconV1.ReconClient
 	ai   aiV1.AiClient
@@ -29,7 +27,6 @@ func NewReconUseCase(clients *data.Clients, logger log.Logger) *ReconUseCase {
 	}
 }
 
-// CreateTask 透传两份 CSV 给 core
 func (uc *ReconUseCase) CreateTask(ctx context.Context, name string, channelCSV, systemCSV []byte) (*reconV1.CreateTaskRsp, error) {
 	return uc.core.CreateTask(ctx, &reconV1.CreateTaskReq{
 		Name:       name,
@@ -38,18 +35,14 @@ func (uc *ReconUseCase) CreateTask(ctx context.Context, name string, channelCSV,
 	})
 }
 
-// GetTask 任务详情
 func (uc *ReconUseCase) GetTask(ctx context.Context, id int64) (*reconV1.Task, error) {
 	return uc.core.GetTask(ctx, &reconV1.GetTaskReq{Id: id})
 }
 
-// ListDiffs 差异列表
 func (uc *ReconUseCase) ListDiffs(ctx context.Context, req *reconV1.ListDiffsReq) (*reconV1.ListDiffsRsp, error) {
 	return uc.core.ListDiffs(ctx, req)
 }
 
-// GetDiff 差异详情 + 懒归因：
-// 若该差异尚未归因，则调用 ai 并把结果回写 core；ai 失败时保持 PENDING，不影响详情展示。
 func (uc *ReconUseCase) GetDiff(ctx context.Context, id int64) (*reconV1.DiffDetail, error) {
 	detail, err := uc.core.GetDiff(ctx, &reconV1.GetDiffReq{Id: id})
 	if err != nil {
@@ -99,12 +92,10 @@ func (uc *ReconUseCase) GetDiff(ctx context.Context, id int64) (*reconV1.DiffDet
 	return detail, nil
 }
 
-// ConfirmDiff 确认 / 纠正
 func (uc *ReconUseCase) ConfirmDiff(ctx context.Context, req *reconV1.ConfirmDiffReq) (*reconV1.ConfirmDiffRsp, error) {
 	return uc.core.ConfirmDiff(ctx, req)
 }
 
-// Summary 任务汇总
 func (uc *ReconUseCase) Summary(ctx context.Context, taskID int64) (*reconV1.TaskSummaryRsp, error) {
 	return uc.core.GetTaskSummary(ctx, &reconV1.GetTaskSummaryReq{TaskId: taskID})
 }

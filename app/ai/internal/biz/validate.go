@@ -7,7 +7,6 @@ import (
 	"unicode/utf8"
 )
 
-// modelOutput 模型返回的原始结构
 type modelOutput struct {
 	Category   string   `json:"category"`
 	Confidence float64  `json:"confidence"`
@@ -16,8 +15,6 @@ type modelOutput struct {
 	Suggestion string   `json:"suggestion"`
 }
 
-// validate 解析模型输出并做四项校验：
-// 1) JSON 合法 2) category 在枚举内 3) confidence 在 [0,1] 4) evidence 必须在白名单内
 func validate(raw string, allowedEvidence map[string]bool) (*modelOutput, error) {
 	var out modelOutput
 	if err := json.Unmarshal([]byte(raw), &out); err != nil {
@@ -39,7 +36,6 @@ func validate(raw string, allowedEvidence map[string]bool) (*modelOutput, error)
 		out.Suggestion = SuggestionInvestigate
 	}
 
-	// evidence 白名单：只保留输入中真实存在的字段；一旦出现编造，降低置信度
 	cleaned := make([]string, 0, len(out.Evidence))
 	hadFabrication := false
 	for _, e := range out.Evidence {
@@ -66,7 +62,6 @@ func validate(raw string, allowedEvidence map[string]bool) (*modelOutput, error)
 	return &out, nil
 }
 
-// allowedEvidence 根据输入实际出现的字段生成白名单
 func allowedEvidence(in Input) map[string]bool {
 	m := map[string]bool{}
 	if in.Channel != nil {

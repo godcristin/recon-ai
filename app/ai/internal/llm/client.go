@@ -11,8 +11,6 @@ import (
 	"time"
 )
 
-// Client 是一个最小可用的 OpenAI 兼容 Chat Completions 客户端。
-// 只依赖 net/http，便于精确控制超时、重试与计量。
 type Client struct {
 	baseURL   string
 	apiKey    string
@@ -34,7 +32,6 @@ func NewClient(baseURL, apiKey, model string, maxTokens int32, timeout time.Dura
 	}
 }
 
-// Enabled 未配置 Key 时返回 false，调用方应走规则兜底
 func (c *Client) Enabled() bool {
 	return c.apiKey != "" && c.baseURL != "" && c.model != ""
 }
@@ -70,14 +67,12 @@ type chatResponse struct {
 	} `json:"error"`
 }
 
-// ChatResult 一次调用的结果与计量
 type ChatResult struct {
 	Content   string
 	TokensIn  int32
 	TokensOut int32
 }
 
-// ChatJSON 调用模型并返回原始文本；要求模型输出 JSON 对象
 func (c *Client) ChatJSON(ctx context.Context, system, user string) (*ChatResult, error) {
 	if !c.Enabled() {
 		return nil, fmt.Errorf("llm client is not configured")
@@ -142,7 +137,6 @@ func (c *Client) ChatJSON(ctx context.Context, system, user string) (*ChatResult
 	}, nil
 }
 
-// stripCodeFence 兼容模型偶尔用 ```json 包裹输出的情况
 func stripCodeFence(s string) string {
 	s = strings.TrimSpace(s)
 	if !strings.HasPrefix(s, "```") {

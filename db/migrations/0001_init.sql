@@ -1,6 +1,3 @@
--- 0001_init.sql  (MySQL 8.0)
--- 对账系统初始化：任务、账单记录、差异、人工反馈
--- 约定：金额单位一律为「分」(BIGINT)；时间统一 DATETIME(3)
 
 CREATE TABLE IF NOT EXISTS recon_task (
     id          BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,

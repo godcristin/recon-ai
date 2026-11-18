@@ -2,7 +2,6 @@ package model
 
 import "time"
 
-// ReconRecord 账单原始记录（渠道与系统合并，source 区分）
 type ReconRecord struct {
 	ID        int64      `gorm:"column:id;primaryKey;autoIncrement"`
 	TaskID    int64      `gorm:"column:task_id"`

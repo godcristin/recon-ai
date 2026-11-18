@@ -16,13 +16,10 @@ import (
 	"github.com/google/wire"
 )
 
-// ProviderSet is biz providers.
 var ProviderSet = wire.NewSet(NewCache, NewClassifyUseCase)
 
-// maxAttempts 模型输出非法时的最大尝试次数
 const maxAttempts = 2
 
-// ClassifyUseCase 差异归因：缓存 → 调用模型 → 校验 → 兜底
 type ClassifyUseCase struct {
 	client *llm.Client
 	cache  *Cache
@@ -39,7 +36,6 @@ func NewClassifyUseCase(client *llm.Client, cache *Cache, c *conf.Bootstrap, log
 	}
 }
 
-// Classify 永远返回一个结果：模型失败时降级为规则兜底，不向上抛错。
 func (uc *ClassifyUseCase) Classify(ctx context.Context, in Input) Output {
 	contextStr := contextJSON(in)
 	key := hashKey(contextStr)

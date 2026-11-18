@@ -13,7 +13,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// ReconRepo 对账任务、记录与差异的持久化
 type ReconRepo struct {
 	data *Data
 	log  *log.Helper
@@ -26,7 +25,6 @@ func NewReconRepo(d *Data, logger log.Logger) *ReconRepo {
 	}
 }
 
-// CreateTask 插入一条对账任务，返回自增 ID
 func (r *ReconRepo) CreateTask(ctx context.Context, name string) (int64, error) {
 	db, err := r.data.DB(ctx)
 	if err != nil {
@@ -45,7 +43,6 @@ func (r *ReconRepo) CreateTask(ctx context.Context, name string) (int64, error) 
 	return task.ID, nil
 }
 
-// BatchCreateRecords 批量写入账单记录，并回填自增 ID
 func (r *ReconRepo) BatchCreateRecords(ctx context.Context, taskID int64, recs []domain.Record) ([]domain.Record, error) {
 	if len(recs) == 0 {
 		return recs, nil
@@ -89,7 +86,6 @@ func (r *ReconRepo) BatchCreateRecords(ctx context.Context, taskID int64, recs [
 	return recs, nil
 }
 
-// BatchCreateDiffs 批量写入差异
 func (r *ReconRepo) BatchCreateDiffs(ctx context.Context, taskID int64, diffs []domain.Diff) error {
 	if len(diffs) == 0 {
 		return nil
@@ -132,7 +128,6 @@ func (r *ReconRepo) BatchCreateDiffs(ctx context.Context, taskID int64, diffs []
 	return nil
 }
 
-// UpdateTaskStats 更新任务统计并置为已匹配
 func (r *ReconRepo) UpdateTaskStats(ctx context.Context, taskID int64, total, diffCount int32, diffAmount int64) error {
 	db, err := r.data.DB(ctx)
 	if err != nil {
@@ -147,7 +142,6 @@ func (r *ReconRepo) UpdateTaskStats(ctx context.Context, taskID int64, total, di
 	}).Error
 }
 
-// GetTask 查询任务
 func (r *ReconRepo) GetTask(ctx context.Context, id int64) (*model.ReconTask, error) {
 	db, err := r.data.DB(ctx)
 	if err != nil {
@@ -164,7 +158,6 @@ func (r *ReconRepo) GetTask(ctx context.Context, id int64) (*model.ReconTask, er
 	return &task, nil
 }
 
-// ListDiffs 分页查询差异
 func (r *ReconRepo) ListDiffs(ctx context.Context, taskID int64, category, state string, page, pageSize int32) ([]*model.ReconDiff, int64, error) {
 	db, err := r.data.DB(ctx)
 	if err != nil {
@@ -192,7 +185,6 @@ func (r *ReconRepo) ListDiffs(ctx context.Context, taskID int64, category, state
 	return list, total, nil
 }
 
-// GetDiff 查询单条差异
 func (r *ReconRepo) GetDiff(ctx context.Context, id int64) (*model.ReconDiff, error) {
 	db, err := r.data.DB(ctx)
 	if err != nil {
@@ -209,7 +201,6 @@ func (r *ReconRepo) GetDiff(ctx context.Context, id int64) (*model.ReconDiff, er
 	return &d, nil
 }
 
-// GetRecordsByIDs 按 ID 批量查询记录
 func (r *ReconRepo) GetRecordsByIDs(ctx context.Context, ids []int64) (map[int64]*model.ReconRecord, error) {
 	out := make(map[int64]*model.ReconRecord, len(ids))
 	if len(ids) == 0 {
@@ -229,7 +220,6 @@ func (r *ReconRepo) GetRecordsByIDs(ctx context.Context, ids []int64) (map[int64
 	return out, nil
 }
 
-// SaveClassification 回写 AI 归因结果
 func (r *ReconRepo) SaveClassification(ctx context.Context, d *Classification) error {
 	db, err := r.data.DB(ctx)
 	if err != nil {
@@ -255,7 +245,6 @@ func (r *ReconRepo) SaveClassification(ctx context.Context, d *Classification) e
 	}).Error
 }
 
-// Classification 归因结果
 type Classification struct {
 	DiffID        int64
 	Category      string
@@ -268,7 +257,6 @@ type Classification struct {
 	PromptVersion string
 }
 
-// ConfirmDiff 确认或纠正差异
 func (r *ReconRepo) ConfirmDiff(ctx context.Context, diffID int64, state, aiCategory, humanCategory, operator string) error {
 	db, err := r.data.DB(ctx)
 	if err != nil {
@@ -296,14 +284,12 @@ func (r *ReconRepo) ConfirmDiff(ctx context.Context, diffID int64, state, aiCate
 	return db.Create(fb).Error
 }
 
-// CategoryAgg 分类聚合
 type CategoryAgg struct {
 	Category string
 	Count    int64
 	Amount   int64
 }
 
-// SummaryByCategory 按分类聚合差异
 func (r *ReconRepo) SummaryByCategory(ctx context.Context, taskID int64) ([]CategoryAgg, error) {
 	db, err := r.data.DB(ctx)
 	if err != nil {
@@ -318,7 +304,6 @@ func (r *ReconRepo) SummaryByCategory(ctx context.Context, taskID int64) ([]Cate
 	return aggs, err
 }
 
-// CountByState 按状态统计差异数量
 func (r *ReconRepo) CountByState(ctx context.Context, taskID int64) (map[string]int64, error) {
 	db, err := r.data.DB(ctx)
 	if err != nil {

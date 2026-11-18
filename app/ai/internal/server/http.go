@@ -9,7 +9,6 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/http"
 )
 
-// NewHTTPServer 只提供健康检查；AI 服务对内的业务入口是 gRPC
 func NewHTTPServer(c *conf.Bootstrap, logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(

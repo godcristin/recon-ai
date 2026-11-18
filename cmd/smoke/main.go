@@ -1,9 +1,3 @@
-// Command smoke 是 core 服务的端到端冒烟客户端：
-// 建任务 → 查差异 → 确认一条 → 纠正一条 → 查汇总。
-// 用法：
-//
-//	go run ./cmd/smoke                       # 用内置小样本
-//	go run ./cmd/smoke -channel testdata/channel.csv -system testdata/system.csv
 package main
 
 import (

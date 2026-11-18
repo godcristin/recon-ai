@@ -5,8 +5,6 @@ import (
 	"time"
 )
 
-// Cache 归因结果缓存：相同差异上下文在 TTL 内直接复用，避免重复调用模型。
-// 进程内实现，够用且无额外依赖；后续可替换为 Redis。
 type Cache struct {
 	mu  sync.RWMutex
 	m   map[string]entry

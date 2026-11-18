@@ -15,7 +15,6 @@ import (
 	"github.com/google/wire"
 )
 
-// wireApp 由 wire 生成依赖装配代码，见 wire_gen.go
 func wireApp(*conf.Bootstrap, log.Logger) (*kratos.App, func(), error) {
 	panic(wire.Build(
 		server.ProviderSet,

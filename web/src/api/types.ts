@@ -1,6 +1,3 @@
-// 与 api/*.proto 生成的服务端 JSON 对齐。
-// 注意：protojson 会把 int64 序列化成字符串（JS 数字精度只有 53 位），
-// 且默认省略零值字段，所以这里的数值字段多为可选。
 
 export interface ParseError {
   line?: number;

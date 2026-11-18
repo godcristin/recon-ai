@@ -1,5 +1,3 @@
-// Command gen-data 生成对账测试数据（渠道账单 + 系统订单）。
-// 用法：go run ./cmd/gen-data -n 1000 -out testdata
 package main
 
 import (
@@ -66,15 +64,12 @@ func main() {
 
 		switch i % 50 {
 		case 10:
-			// 渠道有、系统无
 			fmt.Fprintf(chw, "%s,%s,%s,%s,%s,SUCCESS,渠道单边\n", trade, biz, yuan(cents), yuan(fee), ts)
 			channelOnly++
 		case 20:
-			// 系统有、渠道无
 			fmt.Fprintf(sysw, "%s,%s,%d,%d,%s,SUCCESS,系统单边\n", trade, biz, cents, fee, ts)
 			systemOnly++
 		case 30:
-			// 金额不一致
 			fmt.Fprintf(chw, "%s,%s,%s,%s,%s,SUCCESS,金额差异\n", trade, biz, yuan(cents), yuan(fee), ts)
 			fmt.Fprintf(sysw, "%s,%s,%d,%d,%s,SUCCESS,金额差异\n", trade, biz, cents-100, fee, ts)
 			mismatch++

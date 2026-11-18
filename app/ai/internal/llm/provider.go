@@ -8,8 +8,6 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 )
 
-// NewClientFromConf 从配置构造客户端。
-// API Key 只从环境变量读取，绝不写入配置文件或代码。
 func NewClientFromConf(c *conf.Bootstrap, logger log.Logger) *Client {
 	envName := c.Llm.ApiKeyEnv
 	if envName == "" {

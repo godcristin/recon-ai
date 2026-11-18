@@ -18,10 +18,8 @@ import (
 	"github.com/google/wire"
 )
 
-// ProviderSet is service providers.
 var ProviderSet = wire.NewSet(NewAppService)
 
-// AppService 对外 HTTP 接口：协议转换 + 聚合
 type AppService struct {
 	appV1.UnimplementedAppServer
 
@@ -62,7 +60,6 @@ func (s *AppService) GetTaskSummary(ctx context.Context, req *reconV1.GetTaskSum
 	return s.uc.Summary(ctx, req.TaskId)
 }
 
-// UploadTask 自定义路由：multipart 上传两份 CSV（google.api.http 不适合表达文件上传）
 func (s *AppService) UploadTask(ctx khttp.Context) error {
 	r := ctx.Request()
 	r.Body = stdhttp.MaxBytesReader(ctx.Response(), r.Body, s.maxUpload)
@@ -91,7 +88,6 @@ func (s *AppService) UploadTask(ctx khttp.Context) error {
 		return kerrors.InternalServer("CREATE_TASK_FAILED", err.Error())
 	}
 
-	// 用生成的 HTTP 层同一套编码（protojson），保证所有接口字段风格一致
 	return ctx.Result(stdhttp.StatusOK, rsp)
 }
 

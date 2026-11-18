@@ -13,17 +13,15 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 )
 
-// 差异分类枚举（与 AI prompt 中的标签保持一致）
 const (
-	CategoryCrossDay        = "cross_day"
-	CategoryFeeDiff         = "fee_diff"
-	CategoryRefundUnsync    = "refund_unsync"
-	CategoryMissingInSystem = "missing_in_system"
+	CategoryCrossDay         = "cross_day"
+	CategoryFeeDiff          = "fee_diff"
+	CategoryRefundUnsync     = "refund_unsync"
+	CategoryMissingInSystem  = "missing_in_system"
 	CategoryMissingInChannel = "missing_in_channel"
-	CategoryDuplicate       = "duplicate"
+	CategoryDuplicate        = "duplicate"
 )
 
-// ValidCategory 判断是否为合法分类
 func ValidCategory(c string) bool {
 	switch c {
 	case CategoryCrossDay, CategoryFeeDiff, CategoryRefundUnsync,
@@ -33,7 +31,6 @@ func ValidCategory(c string) bool {
 	return false
 }
 
-// ReconUseCase 对账用例：解析、匹配、差异、确认
 type ReconUseCase struct {
 	repo *data.ReconRepo
 	tm   data.Transaction
@@ -48,7 +45,6 @@ func NewReconUseCase(repo *data.ReconRepo, tm data.Transaction, logger log.Logge
 	}
 }
 
-// CreateTaskResult 建任务的结果
 type CreateTaskResult struct {
 	TaskID      int64
 	Total       int32
@@ -56,7 +52,6 @@ type CreateTaskResult struct {
 	ParseErrors []parser.Error
 }
 
-// CreateTask 解析两份 CSV → 落库 → 三级匹配 → 生成差异 → 更新统计
 func (uc *ReconUseCase) CreateTask(ctx context.Context, name string, channelCSV, systemCSV []byte) (*CreateTaskResult, error) {
 	if len(channelCSV) == 0 || len(systemCSV) == 0 {
 		return nil, ErrEmptyFile
@@ -134,12 +129,10 @@ func (uc *ReconUseCase) CreateTask(ctx context.Context, name string, channelCSV,
 	}, nil
 }
 
-// GetTask 查询任务
 func (uc *ReconUseCase) GetTask(ctx context.Context, id int64) (*model.ReconTask, error) {
 	return uc.repo.GetTask(ctx, id)
 }
 
-// ListDiffs 分页查询差异
 func (uc *ReconUseCase) ListDiffs(ctx context.Context, taskID int64, category, state string, page, pageSize int32) ([]*model.ReconDiff, int64, error) {
 	if page <= 0 {
 		page = 1
@@ -153,7 +146,6 @@ func (uc *ReconUseCase) ListDiffs(ctx context.Context, taskID int64, category, s
 	return uc.repo.ListDiffs(ctx, taskID, category, state, page, pageSize)
 }
 
-// GetDiff 查询差异详情（含两侧原始记录）
 func (uc *ReconUseCase) GetDiff(ctx context.Context, id int64) (*model.ReconDiff, *model.ReconRecord, *model.ReconRecord, error) {
 	d, err := uc.repo.GetDiff(ctx, id)
 	if err != nil || d == nil {
@@ -183,7 +175,6 @@ func (uc *ReconUseCase) GetDiff(ctx context.Context, id int64) (*model.ReconDiff
 	return d, channel, system, nil
 }
 
-// SaveClassification 回写 AI 归因
 func (uc *ReconUseCase) SaveClassification(ctx context.Context, c *data.Classification) error {
 	if !ValidCategory(c.Category) {
 		return ErrInvalidCategory
@@ -191,7 +182,6 @@ func (uc *ReconUseCase) SaveClassification(ctx context.Context, c *data.Classifi
 	return uc.repo.SaveClassification(ctx, c)
 }
 
-// ConfirmDiff 确认或纠正
 func (uc *ReconUseCase) ConfirmDiff(ctx context.Context, diffID int64, action, humanCategory, operator string) (string, error) {
 	d, err := uc.repo.GetDiff(ctx, diffID)
 	if err != nil {
@@ -227,7 +217,6 @@ func (uc *ReconUseCase) ConfirmDiff(ctx context.Context, diffID int64, action, h
 	return state, nil
 }
 
-// Summary 任务汇总
 func (uc *ReconUseCase) Summary(ctx context.Context, taskID int64) (*model.ReconTask, []data.CategoryAgg, float64, error) {
 	task, err := uc.repo.GetTask(ctx, taskID)
 	if err != nil || task == nil {

@@ -1,8 +1,3 @@
-// Command eval 对 AI 归因服务跑离线评测：准确率 / 分类别 / 混淆矩阵 / 延迟与 token。
-//
-// 用法：
-//
-//	go run ./cmd/eval -file ai/eval/data/diffs.jsonl -addr 127.0.0.1:9001 -out ai/eval/report.md
 package main
 
 import (
@@ -44,15 +39,15 @@ type rec struct {
 }
 
 type outcome struct {
-	sample    sample
-	predicted string
+	sample     sample
+	predicted  string
 	confidence float64
-	fallback  bool
-	cached    bool
-	latencyMS int64
-	tokensIn  int32
-	tokensOut int32
-	err       error
+	fallback   bool
+	cached     bool
+	latencyMS  int64
+	tokensIn   int32
+	tokensOut  int32
+	err        error
 }
 
 var categoryOrder = []string{

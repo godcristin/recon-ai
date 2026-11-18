@@ -11,8 +11,6 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/http"
 )
 
-// NewHTTPServer core 的 HTTP 端口只用于健康检查与运维探针；
-// 对外业务接口统一由 recon-bff 暴露。
 func NewHTTPServer(c *conf.Bootstrap, d *data.Data, logger log.Logger) *http.Server {
 	var opts = []http.ServerOption{
 		http.Middleware(
@@ -36,7 +34,6 @@ func NewHTTPServer(c *conf.Bootstrap, d *data.Data, logger log.Logger) *http.Ser
 	srv := http.NewServer(opts...)
 	router := srv.Route("/")
 
-	// /healthz 存活探针：进程活着就返回 200，不依赖数据库
 	router.GET("/healthz", func(ctx http.Context) error {
 		return ctx.JSON(200, map[string]string{
 			"status":  "ok",
@@ -44,7 +41,6 @@ func NewHTTPServer(c *conf.Bootstrap, d *data.Data, logger log.Logger) *http.Ser
 		})
 	})
 
-	// /readyz 就绪探针：数据库不可用时返回 503
 	router.GET("/readyz", func(ctx http.Context) error {
 		if err := d.Ping(ctx.Request().Context()); err != nil {
 			return ctx.JSON(503, map[string]string{

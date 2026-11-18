@@ -1,5 +1,3 @@
-// Command smoke-ai 是 AI 服务的冒烟客户端：跑几个典型差异，看归因结果。
-// 用法：go run ./cmd/smoke-ai -addr 127.0.0.1:9001
 package main
 
 import (
@@ -75,7 +73,7 @@ func main() {
 				TimeDiffHours: 6,
 				System: &reconV1.Record{
 					TradeNo: "CH3", BizNo: "P20260831099",
-					Amount: 10000,
+					Amount:    10000,
 					TradeTime: "2026-09-01T00:05:00+08:00", Status: "SUCCESS", Remark: "校服费",
 				},
 			},

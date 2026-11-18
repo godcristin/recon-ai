@@ -14,13 +14,9 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/http"
 )
 
-// go build -ldflags "-X main.Version=x.y.z"
 var (
-	// Name 服务名
-	Name = "recon-core"
-	// Version 版本号
-	Version = "v1.0.0"
-	// flagconf 配置路径
+	Name     = "recon-core"
+	Version  = "v1.0.0"
 	flagconf string
 )
 

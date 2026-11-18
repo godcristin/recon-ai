@@ -14,10 +14,8 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-// ProviderSet is data providers.
 var ProviderSet = wire.NewSet(NewClients)
 
-// Clients 持有下游服务连接
 type Clients struct {
 	Core reconV1.ReconClient
 	AI   aiV1.AiClient

@@ -12,7 +12,6 @@ import (
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 )
 
-// NewGRPCServer 装配 gRPC 服务：recovery → validate
 func NewGRPCServer(c *conf.Bootstrap, svc *service.AiService, logger log.Logger) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(

@@ -13,7 +13,6 @@ import (
 	"github.com/go-kratos/kratos/v2/log"
 )
 
-// ReconService 只做协议转换：校验、调用 usecase、翻译错误
 type ReconService struct {
 	reconV1.UnimplementedReconServer
 
@@ -28,7 +27,6 @@ func NewReconService(uc *biz.ReconUseCase, logger log.Logger) *ReconService {
 	}
 }
 
-// CreateTask 解析两份 CSV 并完成对账
 func (s *ReconService) CreateTask(ctx context.Context, req *reconV1.CreateTaskReq) (*reconV1.CreateTaskRsp, error) {
 	if err := req.Validate(); err != nil {
 		return nil, commV1.ErrorParamErr("%s", err.Error())
@@ -52,7 +50,6 @@ func (s *ReconService) CreateTask(ctx context.Context, req *reconV1.CreateTaskRe
 	}, nil
 }
 
-// GetTask 任务详情
 func (s *ReconService) GetTask(ctx context.Context, req *reconV1.GetTaskReq) (*reconV1.Task, error) {
 	if err := req.Validate(); err != nil {
 		return nil, commV1.ErrorParamErr("%s", err.Error())
@@ -67,7 +64,6 @@ func (s *ReconService) GetTask(ctx context.Context, req *reconV1.GetTaskReq) (*r
 	return toProtoTask(task), nil
 }
 
-// ListDiffs 差异列表
 func (s *ReconService) ListDiffs(ctx context.Context, req *reconV1.ListDiffsReq) (*reconV1.ListDiffsRsp, error) {
 	if err := req.Validate(); err != nil {
 		return nil, commV1.ErrorParamErr("%s", err.Error())
@@ -83,7 +79,6 @@ func (s *ReconService) ListDiffs(ctx context.Context, req *reconV1.ListDiffsReq)
 		rsp.List = append(rsp.List, toProtoDiff(d))
 	}
 
-	// total_amount 语义是「整个任务的差异金额合计」，不是当前页合计，因此取任务统计值
 	if task, err := s.uc.GetTask(ctx, req.TaskId); err == nil && task != nil {
 		rsp.TotalAmount = task.DiffAmount
 	}
@@ -91,7 +86,6 @@ func (s *ReconService) ListDiffs(ctx context.Context, req *reconV1.ListDiffsReq)
 	return rsp, nil
 }
 
-// GetDiff 差异详情
 func (s *ReconService) GetDiff(ctx context.Context, req *reconV1.GetDiffReq) (*reconV1.DiffDetail, error) {
 	if err := req.Validate(); err != nil {
 		return nil, commV1.ErrorParamErr("%s", err.Error())
@@ -119,8 +113,6 @@ func (s *ReconService) GetDiff(ctx context.Context, req *reconV1.GetDiffReq) (*r
 	}, nil
 }
 
-// timeDiffHours 计算两侧交易时间差（小时，取绝对值）。
-// 放在 core 是因为它属于业务计算，BFF 只做聚合。
 func timeDiffHours(channel, system *model.ReconRecord) int64 {
 	if channel == nil || system == nil || channel.TradeTime == nil || system.TradeTime == nil {
 		return 0
@@ -132,7 +124,6 @@ func timeDiffHours(channel, system *model.ReconRecord) int64 {
 	return int64(d.Hours())
 }
 
-// SaveClassification 回写 AI 归因
 func (s *ReconService) SaveClassification(ctx context.Context, req *reconV1.SaveClassificationReq) (*reconV1.SaveClassificationRsp, error) {
 	if err := req.Validate(); err != nil {
 		return nil, commV1.ErrorParamErr("%s", err.Error())
@@ -155,7 +146,6 @@ func (s *ReconService) SaveClassification(ctx context.Context, req *reconV1.Save
 	return &reconV1.SaveClassificationRsp{Ok: true}, nil
 }
 
-// ConfirmDiff 确认或纠正
 func (s *ReconService) ConfirmDiff(ctx context.Context, req *reconV1.ConfirmDiffReq) (*reconV1.ConfirmDiffRsp, error) {
 	if err := req.Validate(); err != nil {
 		return nil, commV1.ErrorParamErr("%s", err.Error())
@@ -168,7 +158,6 @@ func (s *ReconService) ConfirmDiff(ctx context.Context, req *reconV1.ConfirmDiff
 	return &reconV1.ConfirmDiffRsp{Ok: true, State: state}, nil
 }
 
-// GetTaskSummary 任务汇总
 func (s *ReconService) GetTaskSummary(ctx context.Context, req *reconV1.GetTaskSummaryReq) (*reconV1.TaskSummaryRsp, error) {
 	if err := req.Validate(); err != nil {
 		return nil, commV1.ErrorParamErr("%s", err.Error())
@@ -200,7 +189,6 @@ func (s *ReconService) GetTaskSummary(ctx context.Context, req *reconV1.GetTaskS
 	}, nil
 }
 
-// translate 把领域错误翻译成对外错误码
 func (s *ReconService) translate(ctx context.Context, op string, err error) error {
 	switch {
 	case errors.Is(err, biz.ErrEmptyFile):

@@ -11,7 +11,6 @@ import (
 	"recon-ai/app/core/internal/domain"
 )
 
-// Error 单行解析错误，带行号，便于用户定位问题
 type Error struct {
 	Line    int
 	Message string
@@ -23,7 +22,6 @@ var timeLayouts = []string{
 	time.RFC3339,
 }
 
-// ParseTime 解析渠道/系统账单里的时间字段
 func ParseTime(s string) (time.Time, error) {
 	s = strings.TrimSpace(s)
 	if s == "" {
@@ -37,7 +35,6 @@ func ParseTime(s string) (time.Time, error) {
 	return time.Time{}, fmt.Errorf("unsupported time format: %q", s)
 }
 
-// ParseYuanToFen 把「元」字符串转成「分」，避免浮点误差
 func ParseYuanToFen(s string) (int64, error) {
 	s = strings.TrimSpace(s)
 	if s == "" {
@@ -77,16 +74,10 @@ func ParseYuanToFen(s string) (int64, error) {
 	return v, nil
 }
 
-// ParseChannel 解析渠道账单 CSV（金额单位：元）
-// 必需列：trade_no, out_trade_no, amount, trade_time, status
-// 可选列：fee, remark
 func ParseChannel(r io.Reader) ([]domain.Record, []Error, error) {
 	return parse(r, domain.SourceChannel)
 }
 
-// ParseSystem 解析系统订单 CSV（金额单位：分）
-// 必需列：trade_no, pay_order_no, amount, trade_time, status
-// 可选列：fee, remark
 func ParseSystem(r io.Reader) ([]domain.Record, []Error, error) {
 	return parse(r, domain.SourceSystem)
 }
