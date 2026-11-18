@@ -4,11 +4,10 @@ import (
 	"encoding/csv"
 	"fmt"
 	"io"
+	"recon-ai/app/core/internal/domain"
 	"strconv"
 	"strings"
 	"time"
-
-	"recon-ai/app/core/internal/domain"
 )
 
 type Error struct {
@@ -34,13 +33,11 @@ func ParseTime(s string) (time.Time, error) {
 	}
 	return time.Time{}, fmt.Errorf("unsupported time format: %q", s)
 }
-
 func ParseYuanToFen(s string) (int64, error) {
 	s = strings.TrimSpace(s)
 	if s == "" {
 		return 0, fmt.Errorf("empty")
 	}
-
 	neg := false
 	switch s[0] {
 	case '-':
@@ -49,7 +46,6 @@ func ParseYuanToFen(s string) (int64, error) {
 	case '+':
 		s = s[1:]
 	}
-
 	intPart, fracPart, _ := strings.Cut(s, ".")
 	if intPart == "" {
 		intPart = "0"
@@ -66,22 +62,18 @@ func ParseYuanToFen(s string) (int64, error) {
 	if err != nil {
 		return 0, fmt.Errorf("invalid decimal part: %q", s)
 	}
-
 	v := yuan*100 + cents
 	if neg {
 		v = -v
 	}
 	return v, nil
 }
-
 func ParseChannel(r io.Reader) ([]domain.Record, []Error, error) {
 	return parse(r, domain.SourceChannel)
 }
-
 func ParseSystem(r io.Reader) ([]domain.Record, []Error, error) {
 	return parse(r, domain.SourceSystem)
 }
-
 func parse(r io.Reader, source int32) ([]domain.Record, []Error, error) {
 	bizColumn := "out_trade_no"
 	amountInYuan := true
@@ -89,16 +81,13 @@ func parse(r io.Reader, source int32) ([]domain.Record, []Error, error) {
 		bizColumn = "pay_order_no"
 		amountInYuan = false
 	}
-
 	cr := csv.NewReader(r)
 	cr.FieldsPerRecord = -1
 	cr.TrimLeadingSpace = true
-
 	header, err := cr.Read()
 	if err != nil {
 		return nil, nil, fmt.Errorf("read header: %w", err)
 	}
-
 	col := make(map[string]int, len(header))
 	for i, h := range header {
 		col[strings.ToLower(strings.TrimSpace(h))] = i
@@ -108,13 +97,11 @@ func parse(r io.Reader, source int32) ([]domain.Record, []Error, error) {
 			return nil, nil, fmt.Errorf("missing required column %q", required)
 		}
 	}
-
 	var (
 		records []domain.Record
 		errs    []Error
-		line    = 1 // 表头是第 1 行
+		line    = 1
 	)
-
 	for {
 		row, readErr := cr.Read()
 		if readErr == io.EOF {
@@ -125,7 +112,6 @@ func parse(r io.Reader, source int32) ([]domain.Record, []Error, error) {
 			errs = append(errs, Error{Line: line, Message: readErr.Error()})
 			continue
 		}
-
 		get := func(name string) string {
 			i, ok := col[name]
 			if !ok || i >= len(row) {
@@ -133,25 +119,21 @@ func parse(r io.Reader, source int32) ([]domain.Record, []Error, error) {
 			}
 			return strings.TrimSpace(row[i])
 		}
-
 		amount, err := parseMoney(get("amount"), amountInYuan)
 		if err != nil {
 			errs = append(errs, Error{Line: line, Message: "amount: " + err.Error()})
 			continue
 		}
-
 		fee, err := parseMoney(get("fee"), amountInYuan)
 		if err != nil {
 			errs = append(errs, Error{Line: line, Message: "fee: " + err.Error()})
 			continue
 		}
-
 		tradeTime, err := ParseTime(get("trade_time"))
 		if err != nil {
 			errs = append(errs, Error{Line: line, Message: "trade_time: " + err.Error()})
 			continue
 		}
-
 		records = append(records, domain.Record{
 			Source:    source,
 			TradeNo:   get("trade_no"),
@@ -163,10 +145,8 @@ func parse(r io.Reader, source int32) ([]domain.Record, []Error, error) {
 			Remark:    get("remark"),
 		})
 	}
-
 	return records, errs, nil
 }
-
 func parseMoney(s string, inYuan bool) (int64, error) {
 	if strings.TrimSpace(s) == "" {
 		return 0, nil

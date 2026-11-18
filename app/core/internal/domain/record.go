@@ -3,43 +3,42 @@ package domain
 import "time"
 
 const (
-	SourceChannel int32 = 1 // 渠道账单
-	SourceSystem  int32 = 2 // 系统订单
+	SourceChannel int32 = 1
+	SourceSystem  int32 = 2
 )
 
 type Record struct {
 	ID        int64
 	TaskID    int64
 	Source    int32
-	TradeNo   string // 渠道交易号
-	BizNo     string // 商户单号（渠道 out_trade_no / 系统 pay_order_no）
-	Amount    int64  // 分
-	Fee       int64  // 分
+	TradeNo   string
+	BizNo     string
+	Amount    int64
+	Fee       int64
 	TradeTime time.Time
 	Status    string
 	Remark    string
 }
-
 type DiffType string
 
 const (
-	DiffChannelOnly    DiffType = "channel_only"    // 渠道有、系统无
-	DiffSystemOnly     DiffType = "system_only"     // 系统有、渠道无
-	DiffAmountMismatch DiffType = "amount_mismatch" // 两侧都有但金额不一致
+	DiffChannelOnly    DiffType = "channel_only"
+	DiffSystemOnly     DiffType = "system_only"
+	DiffAmountMismatch DiffType = "amount_mismatch"
 )
 
 type MatchRule string
 
 const (
-	MatchExact MatchRule = "exact" // 单号精确匹配
-	MatchFuzzy MatchRule = "fuzzy" // 金额 + 时间窗 + 唯一候选
-	MatchNone  MatchRule = "none"  // 未匹配
+	MatchExact MatchRule = "exact"
+	MatchFuzzy MatchRule = "fuzzy"
+	MatchNone  MatchRule = "none"
 )
 
 type Diff struct {
 	ChannelRecordID int64
 	SystemRecordID  int64
 	Type            DiffType
-	AmountDiff      int64 // 分：渠道 - 系统；单边时为该侧金额
+	AmountDiff      int64
 	MatchRule       MatchRule
 }

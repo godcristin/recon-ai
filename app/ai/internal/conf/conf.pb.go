@@ -126,14 +126,13 @@ func (x *Server) GetGrpc() *Server_GRPC {
 	return nil
 }
 
-// Llm 只放非敏感配置；API Key 一律从环境变量读取，禁止写进配置文件
 type Llm struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	BaseUrl       string                 `protobuf:"bytes,1,opt,name=base_url,json=baseUrl,proto3" json:"base_url,omitempty"`         // 例如 https://api.deepseek.com
-	Model         string                 `protobuf:"bytes,2,opt,name=model,proto3" json:"model,omitempty"`                            // 例如 deepseek-chat
-	ApiKeyEnv     string                 `protobuf:"bytes,3,opt,name=api_key_env,json=apiKeyEnv,proto3" json:"api_key_env,omitempty"` // 读取哪个环境变量，默认 DEEPSEEK_API_KEY
+	BaseUrl       string                 `protobuf:"bytes,1,opt,name=base_url,json=baseUrl,proto3" json:"base_url,omitempty"`
+	Model         string                 `protobuf:"bytes,2,opt,name=model,proto3" json:"model,omitempty"`
+	ApiKeyEnv     string                 `protobuf:"bytes,3,opt,name=api_key_env,json=apiKeyEnv,proto3" json:"api_key_env,omitempty"`
 	Timeout       *durationpb.Duration   `protobuf:"bytes,4,opt,name=timeout,proto3" json:"timeout,omitempty"`
-	Enable        bool                   `protobuf:"varint,5,opt,name=enable,proto3" json:"enable,omitempty"` // false 时全部走规则兜底（用于演示降级）
+	Enable        bool                   `protobuf:"varint,5,opt,name=enable,proto3" json:"enable,omitempty"`
 	MaxTokens     int32                  `protobuf:"varint,6,opt,name=max_tokens,json=maxTokens,proto3" json:"max_tokens,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache

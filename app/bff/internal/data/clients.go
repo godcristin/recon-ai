@@ -2,40 +2,34 @@ package data
 
 import (
 	"fmt"
-	"time"
-
-	aiV1 "recon-ai/api/ai/v1"
-	reconV1 "recon-ai/api/recon/v1"
-	"recon-ai/app/bff/internal/conf"
-
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	aiV1 "recon-ai/api/ai/v1"
+	reconV1 "recon-ai/api/recon/v1"
+	"recon-ai/app/bff/internal/conf"
+	"time"
 )
 
 var ProviderSet = wire.NewSet(NewClients)
 
 type Clients struct {
-	Core reconV1.ReconClient
-	AI   aiV1.AiClient
-
+	Core  reconV1.ReconClient
+	AI    aiV1.AiClient
 	conns []*grpc.ClientConn
 }
 
 func NewClients(c *conf.Bootstrap, logger log.Logger) (*Clients, func(), error) {
 	l := log.NewHelper(log.With(logger, "module", "data/clients"))
-
 	timeout := 10 * time.Second
 	if c.Client.Timeout != nil {
 		timeout = c.Client.Timeout.AsDuration()
 	}
-
 	coreConn, err := dial(c.Client.CoreEndpoint, timeout)
 	if err != nil {
 		return nil, nil, fmt.Errorf("dial core: %w", err)
 	}
-
 	aiConn, err := dial(c.Client.AiEndpoint, timeout)
 	if err != nil {
 		if closeErr := coreConn.Close(); closeErr != nil {
@@ -43,13 +37,11 @@ func NewClients(c *conf.Bootstrap, logger log.Logger) (*Clients, func(), error) 
 		}
 		return nil, nil, fmt.Errorf("dial ai: %w", err)
 	}
-
 	clients := &Clients{
 		Core:  reconV1.NewReconClient(coreConn),
 		AI:    aiV1.NewAiClient(aiConn),
 		conns: []*grpc.ClientConn{coreConn, aiConn},
 	}
-
 	cleanup := func() {
 		for _, conn := range clients.conns {
 			if err := conn.Close(); err != nil {
@@ -57,10 +49,8 @@ func NewClients(c *conf.Bootstrap, logger log.Logger) (*Clients, func(), error) 
 			}
 		}
 	}
-
 	return clients, cleanup, nil
 }
-
 func dial(endpoint string, timeout time.Duration) (*grpc.ClientConn, error) {
 	conn, err := grpc.NewClient(endpoint,
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
@@ -69,6 +59,6 @@ func dial(endpoint string, timeout time.Duration) (*grpc.ClientConn, error) {
 	if err != nil {
 		return nil, err
 	}
-	_ = timeout // 超时在每次调用时通过 context 控制
+	_ = timeout
 	return conn, nil
 }

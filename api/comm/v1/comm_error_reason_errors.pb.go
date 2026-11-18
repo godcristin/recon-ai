@@ -23,7 +23,6 @@ func ErrorUnknown(format string, args ...interface{}) *errors.Error {
 	return errors.New(500, ErrorReason_UNKNOWN.String(), fmt.Sprintf(format, args...))
 }
 
-// 通用
 func IsParamErr(err error) bool {
 	if err == nil {
 		return false
@@ -32,7 +31,6 @@ func IsParamErr(err error) bool {
 	return e.Reason == ErrorReason_PARAM_ERR.String() && e.Code == 400
 }
 
-// 通用
 func ErrorParamErr(format string, args ...interface{}) *errors.Error {
 	return errors.New(400, ErrorReason_PARAM_ERR.String(), fmt.Sprintf(format, args...))
 }
@@ -109,7 +107,6 @@ func ErrorRpcCallError(format string, args ...interface{}) *errors.Error {
 	return errors.New(500, ErrorReason_RPC_CALL_ERROR.String(), fmt.Sprintf(format, args...))
 }
 
-// 对账任务
 func IsTaskNotFound(err error) bool {
 	if err == nil {
 		return false
@@ -118,7 +115,6 @@ func IsTaskNotFound(err error) bool {
 	return e.Reason == ErrorReason_TASK_NOT_FOUND.String() && e.Code == 404
 }
 
-// 对账任务
 func ErrorTaskNotFound(format string, args ...interface{}) *errors.Error {
 	return errors.New(404, ErrorReason_TASK_NOT_FOUND.String(), fmt.Sprintf(format, args...))
 }
@@ -135,7 +131,6 @@ func ErrorTaskStateInvalid(format string, args ...interface{}) *errors.Error {
 	return errors.New(409, ErrorReason_TASK_STATE_INVALID.String(), fmt.Sprintf(format, args...))
 }
 
-// 差异
 func IsDiffNotFound(err error) bool {
 	if err == nil {
 		return false
@@ -144,7 +139,6 @@ func IsDiffNotFound(err error) bool {
 	return e.Reason == ErrorReason_DIFF_NOT_FOUND.String() && e.Code == 404
 }
 
-// 差异
 func ErrorDiffNotFound(format string, args ...interface{}) *errors.Error {
 	return errors.New(404, ErrorReason_DIFF_NOT_FOUND.String(), fmt.Sprintf(format, args...))
 }
@@ -161,7 +155,6 @@ func ErrorDiffAlreadySettled(format string, args ...interface{}) *errors.Error {
 	return errors.New(409, ErrorReason_DIFF_ALREADY_SETTLED.String(), fmt.Sprintf(format, args...))
 }
 
-// 文件
 func IsFileFormatError(err error) bool {
 	if err == nil {
 		return false
@@ -170,7 +163,6 @@ func IsFileFormatError(err error) bool {
 	return e.Reason == ErrorReason_FILE_FORMAT_ERROR.String() && e.Code == 400
 }
 
-// 文件
 func ErrorFileFormatError(format string, args ...interface{}) *errors.Error {
 	return errors.New(400, ErrorReason_FILE_FORMAT_ERROR.String(), fmt.Sprintf(format, args...))
 }
@@ -187,7 +179,6 @@ func ErrorFileEmpty(format string, args ...interface{}) *errors.Error {
 	return errors.New(400, ErrorReason_FILE_EMPTY.String(), fmt.Sprintf(format, args...))
 }
 
-// AI
 func IsAiServiceError(err error) bool {
 	if err == nil {
 		return false
@@ -196,7 +187,6 @@ func IsAiServiceError(err error) bool {
 	return e.Reason == ErrorReason_AI_SERVICE_ERROR.String() && e.Code == 503
 }
 
-// AI
 func ErrorAiServiceError(format string, args ...interface{}) *errors.Error {
 	return errors.New(503, ErrorReason_AI_SERVICE_ERROR.String(), fmt.Sprintf(format, args...))
 }

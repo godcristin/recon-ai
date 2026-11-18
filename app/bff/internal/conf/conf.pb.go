@@ -118,7 +118,6 @@ func (x *Server) GetHttp() *Server_HTTP {
 	return nil
 }
 
-// Client 下游 gRPC 服务地址。本地开发直连，部署时可换成服务发现地址。
 type Client struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	CoreEndpoint   string                 `protobuf:"bytes,1,opt,name=core_endpoint,json=coreEndpoint,proto3" json:"core_endpoint,omitempty"`

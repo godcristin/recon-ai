@@ -27,15 +27,10 @@ const OperationAppGetTaskSummary = "/api.app.v1.App/GetTaskSummary"
 const OperationAppListDiffs = "/api.app.v1.App/ListDiffs"
 
 type AppHTTPServer interface {
-	// ConfirmDiff 确认 / 纠正
 	ConfirmDiff(context.Context, *v1.ConfirmDiffReq) (*v1.ConfirmDiffRsp, error)
-	// GetDiff 差异详情：BFF 聚合 core 的详情 + ai 的归因（结果回写 core）
 	GetDiff(context.Context, *v1.GetDiffReq) (*v1.DiffDetail, error)
-	// GetTask 任务详情
 	GetTask(context.Context, *v1.GetTaskReq) (*v1.Task, error)
-	// GetTaskSummary 任务汇总
 	GetTaskSummary(context.Context, *v1.GetTaskSummaryReq) (*v1.TaskSummaryRsp, error)
-	// ListDiffs 差异列表
 	ListDiffs(context.Context, *v1.ListDiffsReq) (*v1.ListDiffsRsp, error)
 }
 
@@ -162,15 +157,10 @@ func _App_GetTaskSummary0_HTTP_Handler(srv AppHTTPServer) func(ctx http.Context)
 }
 
 type AppHTTPClient interface {
-	// ConfirmDiff 确认 / 纠正
 	ConfirmDiff(ctx context.Context, req *v1.ConfirmDiffReq, opts ...http.CallOption) (rsp *v1.ConfirmDiffRsp, err error)
-	// GetDiff 差异详情：BFF 聚合 core 的详情 + ai 的归因（结果回写 core）
 	GetDiff(ctx context.Context, req *v1.GetDiffReq, opts ...http.CallOption) (rsp *v1.DiffDetail, err error)
-	// GetTask 任务详情
 	GetTask(ctx context.Context, req *v1.GetTaskReq, opts ...http.CallOption) (rsp *v1.Task, err error)
-	// GetTaskSummary 任务汇总
 	GetTaskSummary(ctx context.Context, req *v1.GetTaskSummaryReq, opts ...http.CallOption) (rsp *v1.TaskSummaryRsp, err error)
-	// ListDiffs 差异列表
 	ListDiffs(ctx context.Context, req *v1.ListDiffsReq, opts ...http.CallOption) (rsp *v1.ListDiffsRsp, err error)
 }
 
@@ -182,7 +172,6 @@ func NewAppHTTPClient(client *http.Client) AppHTTPClient {
 	return &AppHTTPClientImpl{client}
 }
 
-// ConfirmDiff 确认 / 纠正
 func (c *AppHTTPClientImpl) ConfirmDiff(ctx context.Context, in *v1.ConfirmDiffReq, opts ...http.CallOption) (*v1.ConfirmDiffRsp, error) {
 	var out v1.ConfirmDiffRsp
 	pattern := "/api/diffs/{diff_id}/confirm"
@@ -196,7 +185,6 @@ func (c *AppHTTPClientImpl) ConfirmDiff(ctx context.Context, in *v1.ConfirmDiffR
 	return &out, nil
 }
 
-// GetDiff 差异详情：BFF 聚合 core 的详情 + ai 的归因（结果回写 core）
 func (c *AppHTTPClientImpl) GetDiff(ctx context.Context, in *v1.GetDiffReq, opts ...http.CallOption) (*v1.DiffDetail, error) {
 	var out v1.DiffDetail
 	pattern := "/api/diffs/{id}"
@@ -210,7 +198,6 @@ func (c *AppHTTPClientImpl) GetDiff(ctx context.Context, in *v1.GetDiffReq, opts
 	return &out, nil
 }
 
-// GetTask 任务详情
 func (c *AppHTTPClientImpl) GetTask(ctx context.Context, in *v1.GetTaskReq, opts ...http.CallOption) (*v1.Task, error) {
 	var out v1.Task
 	pattern := "/api/tasks/{id}"
@@ -224,7 +211,6 @@ func (c *AppHTTPClientImpl) GetTask(ctx context.Context, in *v1.GetTaskReq, opts
 	return &out, nil
 }
 
-// GetTaskSummary 任务汇总
 func (c *AppHTTPClientImpl) GetTaskSummary(ctx context.Context, in *v1.GetTaskSummaryReq, opts ...http.CallOption) (*v1.TaskSummaryRsp, error) {
 	var out v1.TaskSummaryRsp
 	pattern := "/api/tasks/{task_id}/summary"
@@ -238,7 +224,6 @@ func (c *AppHTTPClientImpl) GetTaskSummary(ctx context.Context, in *v1.GetTaskSu
 	return &out, nil
 }
 
-// ListDiffs 差异列表
 func (c *AppHTTPClientImpl) ListDiffs(ctx context.Context, in *v1.ListDiffsReq, opts ...http.CallOption) (*v1.ListDiffsRsp, error) {
 	var out v1.ListDiffsRsp
 	pattern := "/api/tasks/{task_id}/diffs"

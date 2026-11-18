@@ -30,21 +30,11 @@ const (
 // AppClient is the client API for App service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-//
-// App 是 BFF 对外的 HTTP 契约。
-// 约定：这里只做「协议转换 + 聚合」，不承载业务规则；
-//
-//	响应直接复用 recon 的视图对象，避免多一层无意义的映射。
 type AppClient interface {
-	// 任务详情
 	GetTask(ctx context.Context, in *v1.GetTaskReq, opts ...grpc.CallOption) (*v1.Task, error)
-	// 差异列表
 	ListDiffs(ctx context.Context, in *v1.ListDiffsReq, opts ...grpc.CallOption) (*v1.ListDiffsRsp, error)
-	// 差异详情：BFF 聚合 core 的详情 + ai 的归因（结果回写 core）
 	GetDiff(ctx context.Context, in *v1.GetDiffReq, opts ...grpc.CallOption) (*v1.DiffDetail, error)
-	// 确认 / 纠正
 	ConfirmDiff(ctx context.Context, in *v1.ConfirmDiffReq, opts ...grpc.CallOption) (*v1.ConfirmDiffRsp, error)
-	// 任务汇总
 	GetTaskSummary(ctx context.Context, in *v1.GetTaskSummaryReq, opts ...grpc.CallOption) (*v1.TaskSummaryRsp, error)
 }
 
@@ -109,21 +99,11 @@ func (c *appClient) GetTaskSummary(ctx context.Context, in *v1.GetTaskSummaryReq
 // AppServer is the server API for App service.
 // All implementations must embed UnimplementedAppServer
 // for forward compatibility.
-//
-// App 是 BFF 对外的 HTTP 契约。
-// 约定：这里只做「协议转换 + 聚合」，不承载业务规则；
-//
-//	响应直接复用 recon 的视图对象，避免多一层无意义的映射。
 type AppServer interface {
-	// 任务详情
 	GetTask(context.Context, *v1.GetTaskReq) (*v1.Task, error)
-	// 差异列表
 	ListDiffs(context.Context, *v1.ListDiffsReq) (*v1.ListDiffsRsp, error)
-	// 差异详情：BFF 聚合 core 的详情 + ai 的归因（结果回写 core）
 	GetDiff(context.Context, *v1.GetDiffReq) (*v1.DiffDetail, error)
-	// 确认 / 纠正
 	ConfirmDiff(context.Context, *v1.ConfirmDiffReq) (*v1.ConfirmDiffRsp, error)
-	// 任务汇总
 	GetTaskSummary(context.Context, *v1.GetTaskSummaryReq) (*v1.TaskSummaryRsp, error)
 	mustEmbedUnimplementedAppServer()
 }

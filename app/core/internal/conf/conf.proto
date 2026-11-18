@@ -1,17 +1,11 @@
 syntax = "proto3";
-
 package core.conf;
-
 option go_package = "recon-ai/app/core/internal/conf;conf";
-
 import "google/protobuf/duration.proto";
-
-// Bootstrap 是 core 服务的完整配置，对应 configs/core.yaml
 message Bootstrap {
   Server server = 1;
   Data data = 2;
 }
-
 message Server {
   message HTTP {
     string network = 1;
@@ -26,7 +20,6 @@ message Server {
   HTTP http = 1;
   GRPC grpc = 2;
 }
-
 message Data {
   message Database {
     string driver = 1;

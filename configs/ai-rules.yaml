@@ -5,12 +5,10 @@ server:
   grpc:
     addr: 0.0.0.0:9001
     timeout: 40s
-
 llm:
   base_url: https://api.deepseek.com
   model: deepseek-chat
   api_key_env: DEEPSEEK_API_KEY
   timeout: 20s
-  # 关闭模型：全部走规则兜底，用于消融实验（规则基线）
   enable: false
   max_tokens: 512

@@ -22,31 +22,25 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// 公共错误码：所有服务复用，HTTP/gRPC 状态由 errors.code 决定
 type ErrorReason int32
 
 const (
-	ErrorReason_UNKNOWN ErrorReason = 0
-	// 通用
-	ErrorReason_PARAM_ERR         ErrorReason = 1
-	ErrorReason_UNAUTHORIZED      ErrorReason = 2
-	ErrorReason_FORBIDDEN         ErrorReason = 3
-	ErrorReason_NOT_FOUND         ErrorReason = 4
-	ErrorReason_CONFLICT          ErrorReason = 5
-	ErrorReason_DB_INTERNAL_ERROR ErrorReason = 6
-	ErrorReason_RPC_CALL_ERROR    ErrorReason = 7
-	// 对账任务
-	ErrorReason_TASK_NOT_FOUND     ErrorReason = 10
-	ErrorReason_TASK_STATE_INVALID ErrorReason = 11
-	// 差异
+	ErrorReason_UNKNOWN              ErrorReason = 0
+	ErrorReason_PARAM_ERR            ErrorReason = 1
+	ErrorReason_UNAUTHORIZED         ErrorReason = 2
+	ErrorReason_FORBIDDEN            ErrorReason = 3
+	ErrorReason_NOT_FOUND            ErrorReason = 4
+	ErrorReason_CONFLICT             ErrorReason = 5
+	ErrorReason_DB_INTERNAL_ERROR    ErrorReason = 6
+	ErrorReason_RPC_CALL_ERROR       ErrorReason = 7
+	ErrorReason_TASK_NOT_FOUND       ErrorReason = 10
+	ErrorReason_TASK_STATE_INVALID   ErrorReason = 11
 	ErrorReason_DIFF_NOT_FOUND       ErrorReason = 20
 	ErrorReason_DIFF_ALREADY_SETTLED ErrorReason = 21
-	// 文件
-	ErrorReason_FILE_FORMAT_ERROR ErrorReason = 30
-	ErrorReason_FILE_EMPTY        ErrorReason = 31
-	// AI
-	ErrorReason_AI_SERVICE_ERROR  ErrorReason = 40
-	ErrorReason_AI_OUTPUT_INVALID ErrorReason = 41
+	ErrorReason_FILE_FORMAT_ERROR    ErrorReason = 30
+	ErrorReason_FILE_EMPTY           ErrorReason = 31
+	ErrorReason_AI_SERVICE_ERROR     ErrorReason = 40
+	ErrorReason_AI_OUTPUT_INVALID    ErrorReason = 41
 )
 
 // Enum value maps for ErrorReason.

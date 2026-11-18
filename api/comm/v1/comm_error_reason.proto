@@ -1,40 +1,23 @@
 syntax = "proto3";
-
 package api.comm.v1;
-
 option go_package = "recon-ai/api/comm/v1;v1";
-
 import "errors/errors.proto";
-
-// 公共错误码：所有服务复用，HTTP/gRPC 状态由 errors.code 决定
 enum ErrorReason {
   option (errors.default_code) = 500;
-
   UNKNOWN = 0;
-
-  // 通用
   PARAM_ERR = 1 [(errors.code) = 400];
   UNAUTHORIZED = 2 [(errors.code) = 401];
   FORBIDDEN = 3 [(errors.code) = 403];
   NOT_FOUND = 4 [(errors.code) = 404];
   CONFLICT = 5 [(errors.code) = 409];
-
   DB_INTERNAL_ERROR = 6;
   RPC_CALL_ERROR = 7;
-
-  // 对账任务
   TASK_NOT_FOUND = 10 [(errors.code) = 404];
   TASK_STATE_INVALID = 11 [(errors.code) = 409];
-
-  // 差异
   DIFF_NOT_FOUND = 20 [(errors.code) = 404];
   DIFF_ALREADY_SETTLED = 21 [(errors.code) = 409];
-
-  // 文件
   FILE_FORMAT_ERROR = 30 [(errors.code) = 400];
   FILE_EMPTY = 31 [(errors.code) = 400];
-
-  // AI
   AI_SERVICE_ERROR = 40 [(errors.code) = 503];
   AI_OUTPUT_INVALID = 41 [(errors.code) = 502];
 }

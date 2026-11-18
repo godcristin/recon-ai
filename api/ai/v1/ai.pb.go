@@ -22,15 +22,13 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// ClassifyDiffReq 归因输入。
-// 注意：amount_diff / time_diff_hours 由调用方（recon-core）计算好传入，模型不负责算数。
 type ClassifyDiffReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	DiffType      string                 `protobuf:"bytes,1,opt,name=diff_type,json=diffType,proto3" json:"diff_type,omitempty"`                   // channel_only | system_only | amount_mismatch
-	Channel       *v1.Record             `protobuf:"bytes,2,opt,name=channel,proto3" json:"channel,omitempty"`                                     // 渠道侧记录，可为空
-	System        *v1.Record             `protobuf:"bytes,3,opt,name=system,proto3" json:"system,omitempty"`                                       // 系统侧记录，可为空
-	AmountDiff    int64                  `protobuf:"varint,4,opt,name=amount_diff,json=amountDiff,proto3" json:"amount_diff,omitempty"`            // 金额差（分）
-	TimeDiffHours int64                  `protobuf:"varint,5,opt,name=time_diff_hours,json=timeDiffHours,proto3" json:"time_diff_hours,omitempty"` // 时间差（小时），无两侧记录时为 0
+	DiffType      string                 `protobuf:"bytes,1,opt,name=diff_type,json=diffType,proto3" json:"diff_type,omitempty"`
+	Channel       *v1.Record             `protobuf:"bytes,2,opt,name=channel,proto3" json:"channel,omitempty"`
+	System        *v1.Record             `protobuf:"bytes,3,opt,name=system,proto3" json:"system,omitempty"`
+	AmountDiff    int64                  `protobuf:"varint,4,opt,name=amount_diff,json=amountDiff,proto3" json:"amount_diff,omitempty"`
+	TimeDiffHours int64                  `protobuf:"varint,5,opt,name=time_diff_hours,json=timeDiffHours,proto3" json:"time_diff_hours,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -100,22 +98,20 @@ func (x *ClassifyDiffReq) GetTimeDiffHours() int64 {
 	return 0
 }
 
-// ClassifyDiffRsp 归因输出（JSON Schema 强约束，evidence 必须在输入字段白名单内）
 type ClassifyDiffRsp struct {
-	state    protoimpl.MessageState `protogen:"open.v1"`
-	Category string                 `protobuf:"bytes,1,opt,name=category,proto3" json:"category,omitempty"` // cross_day | fee_diff | refund_unsync |
-	// missing_in_system | missing_in_channel | duplicate
-	Confidence    float64  `protobuf:"fixed64,2,opt,name=confidence,proto3" json:"confidence,omitempty"` // 0~1
-	Reason        string   `protobuf:"bytes,3,opt,name=reason,proto3" json:"reason,omitempty"`           // 自然语言解释，≤200 字
-	Evidence      []string `protobuf:"bytes,4,rep,name=evidence,proto3" json:"evidence,omitempty"`       // 只能是输入中存在的字段名
-	Suggestion    string   `protobuf:"bytes,5,opt,name=suggestion,proto3" json:"suggestion,omitempty"`   // confirm | investigate | ignore
-	Fallback      bool     `protobuf:"varint,6,opt,name=fallback,proto3" json:"fallback,omitempty"`      // true 表示走了规则兜底
-	Model         string   `protobuf:"bytes,7,opt,name=model,proto3" json:"model,omitempty"`
-	PromptVersion string   `protobuf:"bytes,8,opt,name=prompt_version,json=promptVersion,proto3" json:"prompt_version,omitempty"`
-	TokensIn      int32    `protobuf:"varint,9,opt,name=tokens_in,json=tokensIn,proto3" json:"tokens_in,omitempty"`
-	TokensOut     int32    `protobuf:"varint,10,opt,name=tokens_out,json=tokensOut,proto3" json:"tokens_out,omitempty"`
-	LatencyMs     int64    `protobuf:"varint,11,opt,name=latency_ms,json=latencyMs,proto3" json:"latency_ms,omitempty"`
-	Cached        bool     `protobuf:"varint,12,opt,name=cached,proto3" json:"cached,omitempty"`
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Category      string                 `protobuf:"bytes,1,opt,name=category,proto3" json:"category,omitempty"`
+	Confidence    float64                `protobuf:"fixed64,2,opt,name=confidence,proto3" json:"confidence,omitempty"`
+	Reason        string                 `protobuf:"bytes,3,opt,name=reason,proto3" json:"reason,omitempty"`
+	Evidence      []string               `protobuf:"bytes,4,rep,name=evidence,proto3" json:"evidence,omitempty"`
+	Suggestion    string                 `protobuf:"bytes,5,opt,name=suggestion,proto3" json:"suggestion,omitempty"`
+	Fallback      bool                   `protobuf:"varint,6,opt,name=fallback,proto3" json:"fallback,omitempty"`
+	Model         string                 `protobuf:"bytes,7,opt,name=model,proto3" json:"model,omitempty"`
+	PromptVersion string                 `protobuf:"bytes,8,opt,name=prompt_version,json=promptVersion,proto3" json:"prompt_version,omitempty"`
+	TokensIn      int32                  `protobuf:"varint,9,opt,name=tokens_in,json=tokensIn,proto3" json:"tokens_in,omitempty"`
+	TokensOut     int32                  `protobuf:"varint,10,opt,name=tokens_out,json=tokensOut,proto3" json:"tokens_out,omitempty"`
+	LatencyMs     int64                  `protobuf:"varint,11,opt,name=latency_ms,json=latencyMs,proto3" json:"latency_ms,omitempty"`
+	Cached        bool                   `protobuf:"varint,12,opt,name=cached,proto3" json:"cached,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

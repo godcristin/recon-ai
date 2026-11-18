@@ -2,9 +2,7 @@ server:
   http:
     addr: 0.0.0.0:8002
     timeout: 60s
-
 client:
-  # 本地开发直连；部署时改为服务发现地址
   core_endpoint: 127.0.0.1:9000
   ai_endpoint: 127.0.0.1:9001
   timeout: 30s

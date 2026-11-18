@@ -1,37 +1,22 @@
-# binaries
 /bin/
 *.exe
 *.exe~
 *.dll
 *.so
 *.dylib
-
-# test
 *.test
 *.out
 coverage.*
-
-# go
 vendor/
-
-# node
 node_modules/
 web/dist/
-
-# env & secrets
 .env
 .env.local
 *.pem
 *.key
-
-# logs
 logs/
 *.log
-
-# test data
 testdata/
-
-# editor / os
 .idea/
 .vscode/
 .DS_Store

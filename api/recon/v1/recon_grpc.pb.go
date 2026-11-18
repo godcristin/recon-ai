@@ -31,22 +31,13 @@ const (
 // ReconClient is the client API for Recon service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-//
-// Recon 对账核心服务：任务、匹配、差异、确认
 type ReconClient interface {
-	// 创建任务：BFF 把两份 CSV 原文透传，解析与匹配在 core 内完成
 	CreateTask(ctx context.Context, in *CreateTaskReq, opts ...grpc.CallOption) (*CreateTaskRsp, error)
-	// 任务详情
 	GetTask(ctx context.Context, in *GetTaskReq, opts ...grpc.CallOption) (*Task, error)
-	// 差异列表（分页 + 筛选）
 	ListDiffs(ctx context.Context, in *ListDiffsReq, opts ...grpc.CallOption) (*ListDiffsRsp, error)
-	// 差异详情（含两侧原始记录与匹配规则）
 	GetDiff(ctx context.Context, in *GetDiffReq, opts ...grpc.CallOption) (*DiffDetail, error)
-	// 回写 AI 归因结果（BFF 调用 AI 后写回，避免重复调用模型）
 	SaveClassification(ctx context.Context, in *SaveClassificationReq, opts ...grpc.CallOption) (*SaveClassificationRsp, error)
-	// 确认 / 纠正
 	ConfirmDiff(ctx context.Context, in *ConfirmDiffReq, opts ...grpc.CallOption) (*ConfirmDiffRsp, error)
-	// 任务汇总
 	GetTaskSummary(ctx context.Context, in *GetTaskSummaryReq, opts ...grpc.CallOption) (*TaskSummaryRsp, error)
 }
 
@@ -131,22 +122,13 @@ func (c *reconClient) GetTaskSummary(ctx context.Context, in *GetTaskSummaryReq,
 // ReconServer is the server API for Recon service.
 // All implementations must embed UnimplementedReconServer
 // for forward compatibility.
-//
-// Recon 对账核心服务：任务、匹配、差异、确认
 type ReconServer interface {
-	// 创建任务：BFF 把两份 CSV 原文透传，解析与匹配在 core 内完成
 	CreateTask(context.Context, *CreateTaskReq) (*CreateTaskRsp, error)
-	// 任务详情
 	GetTask(context.Context, *GetTaskReq) (*Task, error)
-	// 差异列表（分页 + 筛选）
 	ListDiffs(context.Context, *ListDiffsReq) (*ListDiffsRsp, error)
-	// 差异详情（含两侧原始记录与匹配规则）
 	GetDiff(context.Context, *GetDiffReq) (*DiffDetail, error)
-	// 回写 AI 归因结果（BFF 调用 AI 后写回，避免重复调用模型）
 	SaveClassification(context.Context, *SaveClassificationReq) (*SaveClassificationRsp, error)
-	// 确认 / 纠正
 	ConfirmDiff(context.Context, *ConfirmDiffReq) (*ConfirmDiffRsp, error)
-	// 任务汇总
 	GetTaskSummary(context.Context, *GetTaskSummaryReq) (*TaskSummaryRsp, error)
 	mustEmbedUnimplementedReconServer()
 }

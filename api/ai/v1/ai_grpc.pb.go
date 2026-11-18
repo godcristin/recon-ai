@@ -25,10 +25,7 @@ const (
 // AiClient is the client API for Ai service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-//
-// Ai 差异归因服务：只做「输入上下文 → 受约束结论」，不碰数据库、不碰业务流程
 type AiClient interface {
-	// 单条归因（懒加载：用户点开某条差异时才调用）
 	ClassifyDiff(ctx context.Context, in *ClassifyDiffReq, opts ...grpc.CallOption) (*ClassifyDiffRsp, error)
 }
 
@@ -53,10 +50,7 @@ func (c *aiClient) ClassifyDiff(ctx context.Context, in *ClassifyDiffReq, opts .
 // AiServer is the server API for Ai service.
 // All implementations must embed UnimplementedAiServer
 // for forward compatibility.
-//
-// Ai 差异归因服务：只做「输入上下文 → 受约束结论」，不碰数据库、不碰业务流程
 type AiServer interface {
-	// 单条归因（懒加载：用户点开某条差异时才调用）
 	ClassifyDiff(context.Context, *ClassifyDiffReq) (*ClassifyDiffRsp, error)
 	mustEmbedUnimplementedAiServer()
 }

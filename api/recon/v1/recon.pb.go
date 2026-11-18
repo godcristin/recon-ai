@@ -22,18 +22,17 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// Record 一条账单记录（渠道或系统），金额单位：分
 type Record struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Source        int32                  `protobuf:"varint,2,opt,name=source,proto3" json:"source,omitempty"`                       // 1=渠道 2=系统
-	TradeNo       string                 `protobuf:"bytes,3,opt,name=trade_no,json=tradeNo,proto3" json:"trade_no,omitempty"`       // 渠道交易号
-	BizNo         string                 `protobuf:"bytes,4,opt,name=biz_no,json=bizNo,proto3" json:"biz_no,omitempty"`             // 商户单号 / 系统支付单号
-	Amount        int64                  `protobuf:"varint,5,opt,name=amount,proto3" json:"amount,omitempty"`                       // 金额（分）
-	Fee           int64                  `protobuf:"varint,6,opt,name=fee,proto3" json:"fee,omitempty"`                             // 手续费（分）
-	TradeTime     string                 `protobuf:"bytes,7,opt,name=trade_time,json=tradeTime,proto3" json:"trade_time,omitempty"` // RFC3339
-	Status        string                 `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`                        // 渠道/系统状态
-	Remark        string                 `protobuf:"bytes,9,opt,name=remark,proto3" json:"remark,omitempty"`                        // 附言（用于语义匹配）
+	Source        int32                  `protobuf:"varint,2,opt,name=source,proto3" json:"source,omitempty"`
+	TradeNo       string                 `protobuf:"bytes,3,opt,name=trade_no,json=tradeNo,proto3" json:"trade_no,omitempty"`
+	BizNo         string                 `protobuf:"bytes,4,opt,name=biz_no,json=bizNo,proto3" json:"biz_no,omitempty"`
+	Amount        int64                  `protobuf:"varint,5,opt,name=amount,proto3" json:"amount,omitempty"`
+	Fee           int64                  `protobuf:"varint,6,opt,name=fee,proto3" json:"fee,omitempty"`
+	TradeTime     string                 `protobuf:"bytes,7,opt,name=trade_time,json=tradeTime,proto3" json:"trade_time,omitempty"`
+	Status        string                 `protobuf:"bytes,8,opt,name=status,proto3" json:"status,omitempty"`
+	Remark        string                 `protobuf:"bytes,9,opt,name=remark,proto3" json:"remark,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -131,23 +130,22 @@ func (x *Record) GetRemark() string {
 	return ""
 }
 
-// Diff 一条差异
 type Diff struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	TaskId        int64                  `protobuf:"varint,2,opt,name=task_id,json=taskId,proto3" json:"task_id,omitempty"`
-	DiffType      string                 `protobuf:"bytes,3,opt,name=diff_type,json=diffType,proto3" json:"diff_type,omitempty"`        // channel_only | system_only | amount_mismatch
-	AmountDiff    int64                  `protobuf:"varint,4,opt,name=amount_diff,json=amountDiff,proto3" json:"amount_diff,omitempty"` // 金额差（分），代码计算
-	Category      string                 `protobuf:"bytes,5,opt,name=category,proto3" json:"category,omitempty"`                        // 六类之一，空表示未归因
-	Confidence    float64                `protobuf:"fixed64,6,opt,name=confidence,proto3" json:"confidence,omitempty"`                  // 0~1
-	Reason        string                 `protobuf:"bytes,7,opt,name=reason,proto3" json:"reason,omitempty"`                            // 自然语言解释
-	Evidence      []string               `protobuf:"bytes,8,rep,name=evidence,proto3" json:"evidence,omitempty"`                        // 引用的输入字段名
-	Suggestion    string                 `protobuf:"bytes,9,opt,name=suggestion,proto3" json:"suggestion,omitempty"`                    // confirm | investigate | ignore
-	State         string                 `protobuf:"bytes,10,opt,name=state,proto3" json:"state,omitempty"`                             // PENDING | CLASSIFIED | CONFIRMED | CORRECTED
-	Fallback      bool                   `protobuf:"varint,11,opt,name=fallback,proto3" json:"fallback,omitempty"`                      // 是否走了规则降级
+	DiffType      string                 `protobuf:"bytes,3,opt,name=diff_type,json=diffType,proto3" json:"diff_type,omitempty"`
+	AmountDiff    int64                  `protobuf:"varint,4,opt,name=amount_diff,json=amountDiff,proto3" json:"amount_diff,omitempty"`
+	Category      string                 `protobuf:"bytes,5,opt,name=category,proto3" json:"category,omitempty"`
+	Confidence    float64                `protobuf:"fixed64,6,opt,name=confidence,proto3" json:"confidence,omitempty"`
+	Reason        string                 `protobuf:"bytes,7,opt,name=reason,proto3" json:"reason,omitempty"`
+	Evidence      []string               `protobuf:"bytes,8,rep,name=evidence,proto3" json:"evidence,omitempty"`
+	Suggestion    string                 `protobuf:"bytes,9,opt,name=suggestion,proto3" json:"suggestion,omitempty"`
+	State         string                 `protobuf:"bytes,10,opt,name=state,proto3" json:"state,omitempty"`
+	Fallback      bool                   `protobuf:"varint,11,opt,name=fallback,proto3" json:"fallback,omitempty"`
 	AiModel       string                 `protobuf:"bytes,12,opt,name=ai_model,json=aiModel,proto3" json:"ai_model,omitempty"`
 	PromptVersion string                 `protobuf:"bytes,13,opt,name=prompt_version,json=promptVersion,proto3" json:"prompt_version,omitempty"`
-	CreateTime    int64                  `protobuf:"varint,14,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"` // Unix 秒
+	CreateTime    int64                  `protobuf:"varint,14,opt,name=create_time,json=createTime,proto3" json:"create_time,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -280,14 +278,13 @@ func (x *Diff) GetCreateTime() int64 {
 	return 0
 }
 
-// DiffDetail 差异详情
 type DiffDetail struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Diff          *Diff                  `protobuf:"bytes,1,opt,name=diff,proto3" json:"diff,omitempty"`
-	Channel       *Record                `protobuf:"bytes,2,opt,name=channel,proto3" json:"channel,omitempty"`                                     // 渠道侧记录，可为空
-	System        *Record                `protobuf:"bytes,3,opt,name=system,proto3" json:"system,omitempty"`                                       // 系统侧记录，可为空
-	MatchRule     string                 `protobuf:"bytes,4,opt,name=match_rule,json=matchRule,proto3" json:"match_rule,omitempty"`                // exact | fuzzy | none
-	TimeDiffHours int64                  `protobuf:"varint,5,opt,name=time_diff_hours,json=timeDiffHours,proto3" json:"time_diff_hours,omitempty"` // 两侧交易时间差（小时），由 core 计算，供归因使用
+	Channel       *Record                `protobuf:"bytes,2,opt,name=channel,proto3" json:"channel,omitempty"`
+	System        *Record                `protobuf:"bytes,3,opt,name=system,proto3" json:"system,omitempty"`
+	MatchRule     string                 `protobuf:"bytes,4,opt,name=match_rule,json=matchRule,proto3" json:"match_rule,omitempty"`
+	TimeDiffHours int64                  `protobuf:"varint,5,opt,name=time_diff_hours,json=timeDiffHours,proto3" json:"time_diff_hours,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -357,12 +354,11 @@ func (x *DiffDetail) GetTimeDiffHours() int64 {
 	return 0
 }
 
-// Task 对账任务
 type Task struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Name          string                 `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
-	Status        string                 `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"` // CREATED | PARSING | MATCHING | MATCHED | FAILED
+	Status        string                 `protobuf:"bytes,3,opt,name=status,proto3" json:"status,omitempty"`
 	TotalCount    int32                  `protobuf:"varint,4,opt,name=total_count,json=totalCount,proto3" json:"total_count,omitempty"`
 	DiffCount     int32                  `protobuf:"varint,5,opt,name=diff_count,json=diffCount,proto3" json:"diff_count,omitempty"`
 	DiffAmount    int64                  `protobuf:"varint,6,opt,name=diff_amount,json=diffAmount,proto3" json:"diff_amount,omitempty"`
@@ -1017,8 +1013,8 @@ func (x *SaveClassificationRsp) GetOk() bool {
 type ConfirmDiffReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	DiffId        int64                  `protobuf:"varint,1,opt,name=diff_id,json=diffId,proto3" json:"diff_id,omitempty"`
-	Action        string                 `protobuf:"bytes,2,opt,name=action,proto3" json:"action,omitempty"`                                    // confirm | correct
-	HumanCategory string                 `protobuf:"bytes,3,opt,name=human_category,json=humanCategory,proto3" json:"human_category,omitempty"` // action=correct 时必填
+	Action        string                 `protobuf:"bytes,2,opt,name=action,proto3" json:"action,omitempty"`
+	HumanCategory string                 `protobuf:"bytes,3,opt,name=human_category,json=humanCategory,proto3" json:"human_category,omitempty"`
 	Operator      string                 `protobuf:"bytes,4,opt,name=operator,proto3" json:"operator,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -1244,7 +1240,7 @@ type TaskSummaryRsp struct {
 	DiffCount     int32                  `protobuf:"varint,2,opt,name=diff_count,json=diffCount,proto3" json:"diff_count,omitempty"`
 	DiffAmount    int64                  `protobuf:"varint,3,opt,name=diff_amount,json=diffAmount,proto3" json:"diff_amount,omitempty"`
 	Stats         []*CategoryStat        `protobuf:"bytes,4,rep,name=stats,proto3" json:"stats,omitempty"`
-	AiAcceptRate  float64                `protobuf:"fixed64,5,opt,name=ai_accept_rate,json=aiAcceptRate,proto3" json:"ai_accept_rate,omitempty"` // 确认且未纠正的比例
+	AiAcceptRate  float64                `protobuf:"fixed64,5,opt,name=ai_accept_rate,json=aiAcceptRate,proto3" json:"ai_accept_rate,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }

@@ -5,11 +5,9 @@ server:
   grpc:
     addr: 0.0.0.0:9000
     timeout: 10s
-
 data:
   database:
     driver: mysql
-    # 本地开发默认值；真实环境通过环境变量或部署配置覆盖
     source: "recon:recon123@tcp(127.0.0.1:3306)/recon?charset=utf8mb4&parseTime=True&loc=Local"
     max_idle: 5
     max_open: 20
