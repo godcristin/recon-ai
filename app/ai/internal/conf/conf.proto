@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+package ai.conf;
+
+option go_package = "recon-ai/app/ai/internal/conf;conf";
+
+import "google/protobuf/duration.proto";
+
+message Bootstrap {
+  Server server = 1;
+  Llm llm = 2;
+}
+
+message Server {
+  message HTTP {
+    string network = 1;
+    string addr = 2;
+    google.protobuf.Duration timeout = 3;
+  }
+  message GRPC {
+    string network = 1;
+    string addr = 2;
+    google.protobuf.Duration timeout = 3;
+  }
+  HTTP http = 1;
+  GRPC grpc = 2;
+}
+
+// Llm 只放非敏感配置；API Key 一律从环境变量读取，禁止写进配置文件
+message Llm {
+  string base_url = 1;            // 例如 https://api.deepseek.com
+  string model = 2;               // 例如 deepseek-chat
+  string api_key_env = 3;         // 读取哪个环境变量，默认 DEEPSEEK_API_KEY
+  google.protobuf.Duration timeout = 4;
+  bool enable = 5;                // false 时全部走规则兜底（用于演示降级）
+  int32 max_tokens = 6;
+}

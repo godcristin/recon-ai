@@ -1,0 +1,16 @@
+server:
+  http:
+    addr: 0.0.0.0:8001
+    timeout: 5s
+  grpc:
+    addr: 0.0.0.0:9001
+    timeout: 40s
+
+llm:
+  base_url: https://api.deepseek.com
+  model: deepseek-chat
+  # API Key 从该环境变量读取（见仓库根目录 .env）
+  api_key_env: DEEPSEEK_API_KEY
+  timeout: 20s
+  enable: true
+  max_tokens: 512
