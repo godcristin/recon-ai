@@ -45,3 +45,11 @@
 - 决策：把 `google/protobuf/*.proto` 复制进 `third_party/`，而不是依赖本机 protoc 的 include 目录。
 - 理由：① 本机路径含中文，作为 protoc 参数时被按 ANSI 编码传给子进程，路径损坏导致 `File not found`；② 仓库自包含，换机器不用配 `-I`。
 - 代价：仓库多约 10 个小文件；protoc 升级时 WKT 不会自动跟随（影响可忽略）。
+
+## ADR-007 数据库惰性连接 + 存活/就绪探针分离
+
+- 日期：2026-11-17
+- 背景：阶段 2 首次启动时本机还没有 PostgreSQL，`gorm.Open` 会立即建连并失败，导致进程直接 panic。
+- 决策：`Data.DB(ctx)` 首次使用时才 `gorm.Open`；`/healthz` 只反映进程存活（200），`/readyz` 真正 ping 数据库（不可用返回 503）。
+- 理由：① 服务启动不应被外部依赖绑死；② 探针语义正确，K8s 的 liveness/readiness 正好对应这两者；③ 演示时可以先起服务、后起数据库。
+- 代价：数据库故障要到首个业务请求或 `/readyz` 才暴露，因此部署时必须配 readiness 探针。
