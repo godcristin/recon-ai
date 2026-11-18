@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package api.app.v1;
+
+option go_package = "recon-ai/api/app/v1;v1";
+
+import "google/api/annotations.proto";
+import "api/recon/v1/recon.proto";
+
+// App 是 BFF 对外的 HTTP 契约。
+// 约定：这里只做「协议转换 + 聚合」，不承载业务规则；
+//      响应直接复用 recon 的视图对象，避免多一层无意义的映射。
+service App {
+  // 任务详情
+  rpc GetTask(api.recon.v1.GetTaskReq) returns (api.recon.v1.Task) {
+    option (google.api.http) = {
+      get: "/api/tasks/{id}"
+    };
+  }
+
+  // 差异列表
+  rpc ListDiffs(api.recon.v1.ListDiffsReq) returns (api.recon.v1.ListDiffsRsp) {
+    option (google.api.http) = {
+      get: "/api/tasks/{task_id}/diffs"
+    };
+  }
+
+  // 差异详情：BFF 聚合 core 的详情 + ai 的归因（结果回写 core）
+  rpc GetDiff(api.recon.v1.GetDiffReq) returns (api.recon.v1.DiffDetail) {
+    option (google.api.http) = {
+      get: "/api/diffs/{id}"
+    };
+  }
+
+  // 确认 / 纠正
+  rpc ConfirmDiff(api.recon.v1.ConfirmDiffReq) returns (api.recon.v1.ConfirmDiffRsp) {
+    option (google.api.http) = {
+      post: "/api/diffs/{diff_id}/confirm"
+      body: "*"
+    };
+  }
+
+  // 任务汇总
+  rpc GetTaskSummary(api.recon.v1.GetTaskSummaryReq) returns (api.recon.v1.TaskSummaryRsp) {
+    option (google.api.http) = {
+      get: "/api/tasks/{task_id}/summary"
+    };
+  }
+}
+
+// 说明：文件上传（multipart）不适合用 google.api.http 表达，
+// 由 BFF 自定义路由 POST /api/tasks 实现（阶段 5），内部调用 recon.CreateTask。

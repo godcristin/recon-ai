@@ -1,0 +1,168 @@
+syntax = "proto3";
+
+package api.recon.v1;
+
+option go_package = "recon-ai/api/recon/v1;v1";
+
+import "validate/validate.proto";
+
+// Recon 对账核心服务：任务、匹配、差异、确认
+service Recon {
+  // 创建任务：BFF 把两份 CSV 原文透传，解析与匹配在 core 内完成
+  rpc CreateTask(CreateTaskReq) returns (CreateTaskRsp);
+
+  // 任务详情
+  rpc GetTask(GetTaskReq) returns (Task);
+
+  // 差异列表（分页 + 筛选）
+  rpc ListDiffs(ListDiffsReq) returns (ListDiffsRsp);
+
+  // 差异详情（含两侧原始记录与匹配规则）
+  rpc GetDiff(GetDiffReq) returns (DiffDetail);
+
+  // 回写 AI 归因结果（BFF 调用 AI 后写回，避免重复调用模型）
+  rpc SaveClassification(SaveClassificationReq) returns (SaveClassificationRsp);
+
+  // 确认 / 纠正
+  rpc ConfirmDiff(ConfirmDiffReq) returns (ConfirmDiffRsp);
+
+  // 任务汇总
+  rpc GetTaskSummary(GetTaskSummaryReq) returns (TaskSummaryRsp);
+}
+
+// Record 一条账单记录（渠道或系统），金额单位：分
+message Record {
+  int64 id = 1;
+  int32 source = 2;        // 1=渠道 2=系统
+  string trade_no = 3;     // 渠道交易号
+  string biz_no = 4;       // 商户单号 / 系统支付单号
+  int64 amount = 5;        // 金额（分）
+  int64 fee = 6;           // 手续费（分）
+  string trade_time = 7;   // RFC3339
+  string status = 8;       // 渠道/系统状态
+  string remark = 9;       // 附言（用于语义匹配）
+}
+
+// Diff 一条差异
+message Diff {
+  int64 id = 1;
+  int64 task_id = 2;
+  string diff_type = 3;     // channel_only | system_only | amount_mismatch
+  int64 amount_diff = 4;    // 金额差（分），代码计算
+  string category = 5;      // 六类之一，空表示未归因
+  double confidence = 6;    // 0~1
+  string reason = 7;        // 自然语言解释
+  repeated string evidence = 8; // 引用的输入字段名
+  string suggestion = 9;    // confirm | investigate | ignore
+  string state = 10;        // PENDING | CLASSIFIED | CONFIRMED | CORRECTED
+  bool fallback = 11;       // 是否走了规则降级
+  string ai_model = 12;
+  string prompt_version = 13;
+  int64 create_time = 14;   // Unix 秒
+}
+
+// DiffDetail 差异详情
+message DiffDetail {
+  Diff diff = 1;
+  Record channel = 2;       // 渠道侧记录，可为空
+  Record system = 3;        // 系统侧记录，可为空
+  string match_rule = 4;    // exact | fuzzy | none
+}
+
+// Task 对账任务
+message Task {
+  int64 id = 1;
+  string name = 2;
+  string status = 3;        // CREATED | PARSING | MATCHING | MATCHED | FAILED
+  int32 total_count = 4;
+  int32 diff_count = 5;
+  int64 diff_amount = 6;
+  int64 create_time = 7;
+  int64 finish_time = 8;
+}
+
+message ParseError {
+  int32 line = 1;
+  string message = 2;
+}
+
+message CreateTaskReq {
+  string name = 1 [(validate.rules).string = {min_len: 1, max_len: 64}];
+  bytes channel_csv = 2 [(validate.rules).bytes.min_len = 1];
+  bytes system_csv = 3 [(validate.rules).bytes.min_len = 1];
+}
+
+message CreateTaskRsp {
+  int64 task_id = 1;
+  int32 total_count = 2;
+  int32 diff_count = 3;
+  repeated ParseError parse_errors = 4;
+}
+
+message GetTaskReq {
+  int64 id = 1 [(validate.rules).int64.gt = 0];
+}
+
+message ListDiffsReq {
+  int64 task_id = 1 [(validate.rules).int64.gt = 0];
+  string category = 2;
+  string state = 3;
+  int32 page = 4;
+  int32 page_size = 5 [(validate.rules).int32 = {gte: 0, lte: 100}];
+}
+
+message ListDiffsRsp {
+  repeated Diff list = 1;
+  int32 total = 2;
+  int64 total_amount = 3;
+}
+
+message GetDiffReq {
+  int64 id = 1 [(validate.rules).int64.gt = 0];
+}
+
+message SaveClassificationReq {
+  int64 diff_id = 1 [(validate.rules).int64.gt = 0];
+  string category = 2;
+  double confidence = 3;
+  string reason = 4;
+  repeated string evidence = 5;
+  string suggestion = 6;
+  bool fallback = 7;
+  string ai_model = 8;
+  string prompt_version = 9;
+}
+
+message SaveClassificationRsp {
+  bool ok = 1;
+}
+
+message ConfirmDiffReq {
+  int64 diff_id = 1 [(validate.rules).int64.gt = 0];
+  string action = 2;          // confirm | correct
+  string human_category = 3;  // action=correct 时必填
+  string operator = 4;
+}
+
+message ConfirmDiffRsp {
+  bool ok = 1;
+  string state = 2;
+}
+
+message GetTaskSummaryReq {
+  int64 task_id = 1 [(validate.rules).int64.gt = 0];
+}
+
+message CategoryStat {
+  string category = 1;
+  int32 count = 2;
+  int64 amount = 3;
+}
+
+message TaskSummaryRsp {
+  int32 total = 1;
+  int32 diff_count = 2;
+  int64 diff_amount = 3;
+  repeated CategoryStat stats = 4;
+  double ai_accept_rate = 5;  // 确认且未纠正的比例
+}

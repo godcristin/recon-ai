@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+package api.ai.v1;
+
+option go_package = "recon-ai/api/ai/v1;v1";
+
+import "api/recon/v1/recon.proto";
+
+// Ai 差异归因服务：只做「输入上下文 → 受约束结论」，不碰数据库、不碰业务流程
+service Ai {
+  // 单条归因（懒加载：用户点开某条差异时才调用）
+  rpc ClassifyDiff(ClassifyDiffReq) returns (ClassifyDiffRsp);
+}
+
+// ClassifyDiffReq 归因输入。
+// 注意：amount_diff / time_diff_hours 由调用方（recon-core）计算好传入，模型不负责算数。
+message ClassifyDiffReq {
+  string diff_type = 1;              // channel_only | system_only | amount_mismatch
+  api.recon.v1.Record channel = 2;   // 渠道侧记录，可为空
+  api.recon.v1.Record system = 3;    // 系统侧记录，可为空
+  int64 amount_diff = 4;             // 金额差（分）
+  int64 time_diff_hours = 5;         // 时间差（小时），无两侧记录时为 0
+}
+
+// ClassifyDiffRsp 归因输出（JSON Schema 强约束，evidence 必须在输入字段白名单内）
+message ClassifyDiffRsp {
+  string category = 1;        // cross_day | fee_diff | refund_unsync |
+                              // missing_in_system | missing_in_channel | duplicate
+  double confidence = 2;      // 0~1
+  string reason = 3;          // 自然语言解释，≤200 字
+  repeated string evidence = 4; // 只能是输入中存在的字段名
+  string suggestion = 5;      // confirm | investigate | ignore
+  bool fallback = 6;          // true 表示走了规则兜底
+  string model = 7;
+  string prompt_version = 8;
+  int32 tokens_in = 9;
+  int32 tokens_out = 10;
+  int64 latency_ms = 11;
+  bool cached = 12;
+}
