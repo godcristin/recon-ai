@@ -67,6 +67,17 @@ go run ./cmd/smoke
 # CreateTask ok: task_id=1 total=0 diff=0
 ```
 
+### 5. 前端
+
+```powershell
+cd web
+pnpm install
+pnpm dev          # http://localhost:5173
+```
+
+前端通过 Vite 代理把 `/api` 转发到 BFF（`127.0.0.1:8002`），所以要先起三个后端服务。
+详见 [`web/README.md`](web/README.md)。
+
 ## 生成代码
 
 ```powershell
