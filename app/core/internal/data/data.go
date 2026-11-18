@@ -15,7 +15,14 @@ import (
 )
 
 // ProviderSet is data providers.
-var ProviderSet = wire.NewSet(NewData, NewReconRepo)
+var ProviderSet = wire.NewSet(NewData, NewTransaction, NewReconRepo)
+
+type txKey struct{}
+
+// Transaction 事务接口：biz 通过它开启事务，不直接接触 gorm
+type Transaction interface {
+	InTx(context.Context, func(ctx context.Context) error) error
+}
 
 // Data 持有基础设施连接。
 // DB 采用「首次使用才连接」的惰性策略：数据库未就绪时进程仍可启动，
@@ -40,8 +47,28 @@ func NewData(c *conf.Bootstrap, logger log.Logger) (*Data, func(), error) {
 	return d, cleanup, nil
 }
 
-// DB 取带 ctx 的 DB 句柄；首次调用时建立连接
+// NewTransaction 把 Data 暴露成 Transaction，供 biz 使用
+func NewTransaction(d *Data) Transaction {
+	return d
+}
+
+// InTx 在事务中执行 fn；fn 内的 repo 调用会通过 ctx 自动复用同一个事务
+func (d *Data) InTx(ctx context.Context, fn func(ctx context.Context) error) error {
+	db, err := d.DB(ctx)
+	if err != nil {
+		return err
+	}
+	return db.Transaction(func(tx *gorm.DB) error {
+		return fn(context.WithValue(ctx, txKey{}, tx))
+	})
+}
+
+// DB 取带 ctx 的 DB 句柄；优先复用事务，其次按需连接
 func (d *Data) DB(ctx context.Context) (*gorm.DB, error) {
+	if tx, ok := ctx.Value(txKey{}).(*gorm.DB); ok {
+		return tx.WithContext(ctx), nil
+	}
+
 	d.mu.Lock()
 	defer d.mu.Unlock()
 

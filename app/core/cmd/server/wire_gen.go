@@ -25,7 +25,8 @@ func wireApp(bootstrap *conf.Bootstrap, logger log.Logger) (*kratos.App, func(),
 		return nil, nil, err
 	}
 	reconRepo := data.NewReconRepo(dataData, logger)
-	reconUseCase := biz.NewReconUseCase(reconRepo, logger)
+	transaction := data.NewTransaction(dataData)
+	reconUseCase := biz.NewReconUseCase(reconRepo, transaction, logger)
 	reconService := service.NewReconService(reconUseCase, logger)
 	grpcServer := server.NewGRPCServer(bootstrap, reconService, logger)
 	httpServer := server.NewHTTPServer(bootstrap, dataData, logger)
