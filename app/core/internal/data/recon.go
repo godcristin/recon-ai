@@ -2,6 +2,9 @@ package data
 
 import (
 	"context"
+	"time"
+
+	"recon-ai/app/core/internal/data/model"
 
 	"github.com/go-kratos/kratos/v2/log"
 )
@@ -26,11 +29,14 @@ func (r *ReconRepo) CreateTask(ctx context.Context, name string) (int64, error) 
 		return 0, err
 	}
 
-	var id int64
-	if err := db.Raw(`INSERT INTO recon_task (name, status) VALUES (?, 'CREATED') RETURNING id`, name).
-		Scan(&id).Error; err != nil {
+	task := &model.ReconTask{
+		Name:      name,
+		Status:    "CREATED",
+		CreatedAt: time.Now(),
+	}
+	if err := db.Create(task).Error; err != nil {
 		r.log.WithContext(ctx).Errorw("msg", "CreateTask failed", "err", err, "name", name)
 		return 0, err
 	}
-	return id, nil
+	return task.ID, nil
 }

@@ -53,3 +53,14 @@
 - 决策：`Data.DB(ctx)` 首次使用时才 `gorm.Open`；`/healthz` 只反映进程存活（200），`/readyz` 真正 ping 数据库（不可用返回 503）。
 - 理由：① 服务启动不应被外部依赖绑死；② 探针语义正确，K8s 的 liveness/readiness 正好对应这两者；③ 演示时可以先起服务、后起数据库。
 - 代价：数据库故障要到首个业务请求或 `/readyz` 才暴露，因此部署时必须配 readiness 探针。
+
+## ADR-008 数据库从 PostgreSQL 改为 MySQL 8
+
+- 日期：2026-11-17
+- 背景：开发机已有 MySQL 8.0（含 Workbench），没有 PostgreSQL；为一个个人项目再装一套 PG 不划算。
+- 决策：改用 MySQL 8.0 + `gorm.io/driver/mysql`；迁移脚本改为 MySQL 方言（`AUTO_INCREMENT`、`DATETIME(3)`、`JSON`、`TINYINT(1)`）。
+- 影响：
+  - 插入改为 GORM `Create` 取 `LastInsertId`（MySQL 无 `RETURNING`）；
+  - `evidence` 用 `JSON` 而非 `JSONB`，复杂 JSON 查询能力弱一些（本项目只做整存整取，无影响）；
+  - 与公司技术栈（MySQL）一致，面试讲述时更贴近真实经验。
+- 代价：失去 PG 的部分高级能力（部分索引、GIN 索引），但本项目用不到。

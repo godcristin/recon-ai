@@ -9,7 +9,7 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/google/wire"
-	"gorm.io/driver/postgres"
+	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	gormlogger "gorm.io/gorm/logger"
 )
@@ -46,11 +46,11 @@ func (d *Data) DB(ctx context.Context) (*gorm.DB, error) {
 	defer d.mu.Unlock()
 
 	if d.db == nil {
-		db, err := gorm.Open(postgres.Open(d.conf.Data.Database.Source), &gorm.Config{
+		db, err := gorm.Open(mysql.Open(d.conf.Data.Database.Source), &gorm.Config{
 			Logger: gormlogger.Default.LogMode(gormlogger.Warn),
 		})
 		if err != nil {
-			d.err = fmt.Errorf("open postgres: %w", err)
+			d.err = fmt.Errorf("open mysql: %w", err)
 			return nil, d.err
 		}
 		sqlDB, err := db.DB()

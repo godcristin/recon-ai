@@ -7,10 +7,10 @@
 Monorepo，三个独立部署的 Kratos 服务 + 一个前端：
 
 - `recon-bff`：HTTP 对入口，鉴权、上传、聚合、SSE
-- `recon-core`：gRPC，业务与事务，独占 Postgres
+- `recon-core`：gRPC，业务与事务，独占 MySQL
 - `recon-ai`：gRPC，prompt 与模型调用，无 DB
 
-技术栈：Go 1.22 / Kratos v2 / Wire / proto / Postgres 16 / etcd / Vite + React + TS。
+技术栈：Go 1.22 / Kratos v2 / Wire / proto / MySQL 8 / etcd / Vite + React + TS。
 
 当前阶段见 `docs/00-项目立项书.md` 第 10 节。**不要**自行升级架构或引入新组件。
 
@@ -40,7 +40,7 @@ docs/                          立项书、ADR、决策日志
 - 改接口先改 `api/**/*.proto`，再 `make api`，禁止手改 `*_pb.go`
 - `google.api.http` 注解决定 HTTP 路由，新增接口必须带
 - 金额一律 `int64` 分，禁止 float
-- 时间字段统一 `created_at` / `updated_at`，数据库用 `timestamptz`
+- 时间字段统一 `created_at` / `updated_at`，数据库用 `DATETIME(3)`
 - 状态用 int 常量 + 状态机，禁止裸数字
 
 ## 4. AI 链路约定
