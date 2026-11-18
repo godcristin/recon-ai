@@ -7,19 +7,21 @@ import (
 
 	"github.com/go-kratos/kratos/v2/log"
 	"github.com/go-kratos/kratos/v2/middleware"
-	"github.com/go-kratos/kratos/v2/middleware/logging"
 	"github.com/go-kratos/kratos/v2/middleware/recovery"
 	"github.com/go-kratos/kratos/v2/middleware/validate"
 	"github.com/go-kratos/kratos/v2/transport/grpc"
 )
 
-// NewGRPCServer 装配 gRPC 服务：recovery → logging → validate
+// NewGRPCServer 装配 gRPC 服务：recovery → validate
+//
+// 这里刻意不挂 logging.Server：它会把请求参数整体打进日志，
+// 而 CreateTask 的入参是两份完整 CSV（可达数 MB，且含用户交易信息）。
+// 业务日志由 service 层按需打印摘要。
 func NewGRPCServer(c *conf.Bootstrap, svc *service.ReconService, logger log.Logger) *grpc.Server {
 	var opts = []grpc.ServerOption{
 		grpc.Middleware(
 			middleware.Chain(
 				recovery.Recovery(),
-				logging.Server(logger),
 				validate.Validator(),
 			),
 		),

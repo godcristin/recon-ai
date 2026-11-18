@@ -80,8 +80,13 @@ func (s *ReconService) ListDiffs(ctx context.Context, req *reconV1.ListDiffsReq)
 	rsp := &reconV1.ListDiffsRsp{Total: int32(total), List: make([]*reconV1.Diff, 0, len(list))}
 	for _, d := range list {
 		rsp.List = append(rsp.List, toProtoDiff(d))
-		rsp.TotalAmount += d.AmountDiff
 	}
+
+	// total_amount 语义是「整个任务的差异金额合计」，不是当前页合计，因此取任务统计值
+	if task, err := s.uc.GetTask(ctx, req.TaskId); err == nil && task != nil {
+		rsp.TotalAmount = task.DiffAmount
+	}
+
 	return rsp, nil
 }
 

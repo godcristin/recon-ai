@@ -28,6 +28,9 @@ web/dist/
 logs/
 *.log
 
+# test data
+testdata/
+
 # editor / os
 .idea/
 .vscode/
